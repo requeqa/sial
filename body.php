@@ -25,9 +25,9 @@ if(!empty($_GET["page"]))
             # code...
             break;
             
-        case 'carrito':
-            echo '<h1 class="page-header">Medida</h1>';
-                require_once 'pages/venta.php';
+        case 'venta':
+            echo '<h1 class="page-header">Venta</h1>';
+                require_once 'pages/carrito.php';
                 break;
              
         case 'medida':
