@@ -25,7 +25,7 @@ if(!empty($_POST)){
  //   Echo '---POST---';
   //  print_r($_POST);
   //  Echo '---Session---';
-print_r($_SESSION['carrito']);
+  if(!empty($_SESSION['carrito'])){print_r($_SESSION['carrito'])};
 echo '</pre>';
 
 
