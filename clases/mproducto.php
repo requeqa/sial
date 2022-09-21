@@ -28,9 +28,15 @@ class mproducto extends conexion{
 		$this->CODMARC = $post['CODMARC'];
 		$this->VIGENCIA = $post['VIGENCIA'];        
 		
-		$sql = "Insert Into mproducto(`CODPROV`,`NOMPROD`,`DESCPROD1`,`LUGAR`,`PROCEDENCIA`,`CODUNID`,`CODMARC`,`VIGENCIA`)Values(?,?,?,?,?,?,?,?)";        ///Modificar1
+		$sql = "INSERT INTO mproducto(`CODPROV`,`NOMPROD`,`DESCPROD1`,`LUGAR`,`PROCEDENCIA`,`CODUNID`,`CODMARC`,`VIGENCIA`)VALUES(?,?,?,?,?,?,?,?)";        ///Modificar1
 		$arrData = array( $this->CODPROV, $this->NOMPROD,$this->DESCPROD1,$this->LUGAR,$this->PROCEDENCIA,$this->CODUNID,$this->CODMARC,$this->VIGENCIA);      ///Modificar2
-		return $this->conexion->Insert($sql, $arrData);
+        $this->CODPRD = $this->conexion->Insert($sql, $arrData);
+		
+        $sql = "INSERT INTO `binventario` (`DETINVENT`, `IDSUC`, `CODPRD`, `CANTPRD`, `UNITPRD`, `TOTUNIT`) VALUES (null, '1',?,'0','0','0');";
+        $arrData = array($this->CODPRD);
+        $this->CODPRD = $this->conexion->Insert($sql, $arrData);
+		
+        return $this->CODPRD;
 	}
 	public function Actualizar($post){
 		$this->CODPROV = $post['CODPROV'];
@@ -80,7 +86,7 @@ class mproducto extends conexion{
         }
         echo "<input type=\"submit\"></form>";
     }
-    function doTableProd(){
+    function doTableProd(){     //Tabla de productos
         $sql = "Select * from vw_productos ";
         $DataSet = $this->conexion->Select($sql); 
         echo '<table class="table table-striped">
@@ -111,21 +117,26 @@ class mproducto extends conexion{
             echo "</td></tr>";
         }            
         echo '</tbody></table>';
-    }function doTableINV(){
-        $sql = "Select CODPRD, `CODPROV`,`NOMPROD`,`DESCPROD1`,`LUGAR`,`CODUNID`,`CODMARC` from mproducto";
+    }
+    
+    function doTableINV(){      // Tabla de Inventario
+        $sql = "SELECT p.`CODPRD`, `CODPROV`, `NOMPROD`, `DESCPROD1`, `LUGAR`, `CODMARC`, `PROCEDENCIA`, `CODUNID`, i.CANTPRD FROM `mproducto` p inner join binventario I on p.CODPRD=i.CODPRD; "; // , `VIGENCIA`, `MINPRD`
         $dataSet = $this->conexion->Select($sql); 
         echo '<table class="table table-striped">
         <thead>
           <tr>
-            <th>CODPRD</th>
-            <th>CODPROV</th>
-            <th>NOMPROD</th>
-            <th>DESCPROD1</th>
-            <th>LUGAR</th>
-            <th>CODUNID</th>
-            <th>CODMARC</th>
-            <th>editar</th>
-            <th>Cantidad</th>   
+            <th>Id</th>
+            <th>Codigo<br>proveedor</th>
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th>Lugar</th>
+            <th>Marca</th>
+            <th>Procedencia</th>
+            <th>Medida</th>
+            <th>En Inventario</th>
+            <th>Cantidad</th>
+            <th>Precio<br>Unitario</th>
+            <th>Ingresar </th>   
           </tr>
         </thead>
         <tbody>';             
@@ -134,15 +145,20 @@ class mproducto extends conexion{
             foreach($linea as $celda){                    
                 echo "<td>$celda</td>";
             }
-            echo "<td><a href='?page=producto&act=edit&CODPRD={$linea['CODPRD']}'>editar</a></td>";   
-            echo "<td><form action='?page=productos&act=add&CODPRD={$linea['CODPRD']}' method='post'><input type='number name='CANTIDAD' value='0'><input type='submit'value='+' ></td></form> "; 
-            echo "</td></tr>";
+            echo "
+            <form action='?page=productos&act=add&CODPRD={$linea['CODPRD']}' method='post' id='igreso{$linea['CODPRD']}'>
+            <td><input type='number' name='CANTIDAD' value='0'></td>
+            <td><input type='text' name='PRECIO' placeholder='0.00'></td>
+            <td><button type='submit' form='igreso{$linea['CODPRD']}' value='Submit'>+</button></td>
+            </form>
+                    ";
+            echo "</tr>";
         }            
         echo '</tbody></table>';
     }
 
 
-
+// Controles de Formulario
     function doListMarca($id){        
         $sql ="SELECT * from tmarca "; ///Modificar5
         $DataSet = $this->conexion->Select($sql);

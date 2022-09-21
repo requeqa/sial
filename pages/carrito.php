@@ -1,13 +1,13 @@
 <?php
-//session_start();
+//;
 echo "<pre>";
 print_r($_SESSION);
 print_r(session_id());  
 echo"</pre>";
 
-$wppa = array( 'elm1' => 'value1', 'elm2' => 'value2','elm3' => 'value3');
+//$wppa = array( 'elm1' => 'value1', 'elm2' => 'value2','elm3' => 'value3');
 
-$_SESSION['wppa'] = $wppa;
+//$_SESSION['wppa'] = $wppa;
 
 $_SESSION['N'] = (isset($_SESSION['N']))?$_SESSION['N']+1:0;
 

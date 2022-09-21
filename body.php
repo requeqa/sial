@@ -41,7 +41,8 @@ if(!empty($_GET["page"]))
             break;
                     
         default:
-            # code...
+            echo '<h1 class="page-header">TEST</h1>';
+           // require_once 'pages/DEMO.php';
             break;
     }
 
