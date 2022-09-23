@@ -7,13 +7,13 @@ if(!empty($_GET["page"]))
             break;
         
         case 'productos':
-            echo '<h1 class="page-header">Productos</h1>';
-            require_once 'pages/producto_table.php';
+            echo '<h1 class="page-header">Ingreso</h1>';
+            require_once 'pages/ingreso.php';
             break;
         
         case 'ingreso':
             echo '<h1 class="page-header">Ingreso</h1>';
-            require_once 'pages/movimiento.php';
+            require_once 'pages/ingreso.php';
             break;        
             
         case 'salida':

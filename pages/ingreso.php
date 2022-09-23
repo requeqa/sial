@@ -44,7 +44,7 @@ if(!empty($_SESSION['ingreso'])){ ?>
 
 	<div class="row">
 		<div class="col-md-6">
-			<form class="form-horizontal" action="?page=productos&act=submit" method="post">
+			<form class="form-horizontal" action="?page=ingreso&act=submit" method="post">
 			<div class="form-group">
 				<label for="DESCGLOS" class="col-sm-2 control-label">Glosa</label>
 				<div class="col-sm-4">
@@ -86,7 +86,7 @@ if(!empty($_SESSION['ingreso'])){ ?>
 					foreach ($_SESSION['ingreso'] as $key => $value) {
 						
 						echo "<tr>
-						<form action='?page=productos&act=del&CODPRD={$key}' method='post' id='igreso{$key}'>
+						<form action='?page=ingreso&act=del&CODPRD={$key}' method='post' id='igreso{$key}'>
 						
 							<td><input type='hidden' id='CANTIDAD' name='CANTIDAD' value='$key'></td>
 							<td> Nombre X </td>
