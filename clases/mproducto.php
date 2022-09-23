@@ -171,8 +171,8 @@ class mproducto extends conexion{
 			}
 			echo "
 			<form action='?page=ingreso&act=add&CODPRD={$linea['CODPRD']}' method='post' id='igreso{$linea['CODPRD']}'>
-			<td><input type='number' name='CANTIDAD' min='1' value='0'></td>
-			<td><input type='text' name='PRECIO' placeholder='0.00'></td>
+			<td><input type='number' name='CANTIDAD' min='1' value='0' size='5'></td>
+			<td><input type='text' name='PRECIO' placeholder='0.00' size='5'></td>
 			<td><button type='submit' form='igreso{$linea['CODPRD']}' value='Submit'>+</button></td>
 			</form>
 					";
