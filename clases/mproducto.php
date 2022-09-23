@@ -1,7 +1,7 @@
 <?php
 require_once("autoload.php");
 class mproducto extends conexion{
-    //  --  Columnas --
+	//  --  Columnas --
 
 	private int $CODPRD;
 	private string $CODPROV;
@@ -30,13 +30,13 @@ class mproducto extends conexion{
 		
 		$sql = "INSERT INTO mproducto(`CODPROV`,`NOMPROD`,`DESCPROD1`,`LUGAR`,`PROCEDENCIA`,`CODUNID`,`CODMARC`,`VIGENCIA`)VALUES(?,?,?,?,?,?,?,?)";        ///Modificar1
 		$arrData = array( $this->CODPROV, $this->NOMPROD,$this->DESCPROD1,$this->LUGAR,$this->PROCEDENCIA,$this->CODUNID,$this->CODMARC,$this->VIGENCIA);      ///Modificar2
-        $this->CODPRD = $this->conexion->Insert($sql, $arrData);
+		$this->CODPRD = $this->conexion->Insert($sql, $arrData);
 		
-        $sql = "INSERT INTO `binventario` (`DETINVENT`, `IDSUC`, `CODPRD`, `CANTPRD`, `UNITPRD`, `TOTUNIT`) VALUES (null, '1',?,'0','0','0');";
-        $arrData = array($this->CODPRD);
-        $this->CODPRD = $this->conexion->Insert($sql, $arrData);
+		$sql = "INSERT INTO `binventario` (`DETINVENT`, `IDSUC`, `CODPRD`, `CANTPRD`, `UNITPRD`, `TOTUNIT`) VALUES (null, '1',?,'0','0','0');";
+		$arrData = array($this->CODPRD);
+		$this->CODPRD = $this->conexion->Insert($sql, $arrData);
 		
-        return $this->CODPRD;
+		return $this->CODPRD;
 	}
 	public function Actualizar($post){
 		$this->CODPROV = $post['CODPROV'];
@@ -63,134 +63,158 @@ class mproducto extends conexion{
 		return $this->conexion->Select($sql); 
 	}
 
-    public function getWea(){
-        //print ("en w3a");
-            return $this->conexion->wea("mproducto");
-    }
-    public function getAll(){
-        $sql="SELECT COLUMN_NAME, DATA_TYPE, COLUMN_COMMENT, COLUMN_KEY
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE TABLE_SCHEMA = 'sial_demo' AND TABLE_NAME = 'mproducto';" ;           
-        return $this->conexion->Select($sql); 
-    }
-    function doForm($DataSet){
-        echo '<form action="mproducto.php" method="post">';
-        foreach ($DataSet as $data) {
-            //  echo "$nombre : $valor\n";
-            $titulo=$placeholder="";
-            list($titulo,$placeholder)= explode("|",$data["COLUMN_COMMENT"].";");
-            $tipo = (in_array($data["DATA_TYPE"], array("int","decimal")))?"number":"text";
-    
-            $nombre= $data["COLUMN_NAME"];
-            echo $titulo.":<input type=\"{$tipo}\" name=\"{$nombre}\" value=\"\" placeholder=\"{$placeholder}\"><br>";
-        }
-        echo "<input type=\"submit\"></form>";
-    }
-    function doTableProd(){     //Tabla de productos
-        $sql = "Select * from vw_productos ";
-        $DataSet = $this->conexion->Select($sql); 
-        echo '<table class="table table-striped">
-        <thead>
-          <tr>
-          <th>CODPRD</th>
-          <th>CODPROV</th>
-            <th>NOMPROD</th>
-            <th>DESCPROD1</th>
-            <th>LUGAR</th>
-            <th>PROCEDENCIA</th>
-            <th>CODUNID</th>
-            <th>CODMARC</th>
-            <th>Cantidad</th>   
-            <th>Unitario</th>   
-            <th>Editar</th>
-          </tr>
-        </thead>
-        <tbody>';             
-        foreach ($DataSet as $linea){
-            echo "<tr>";
-            foreach($linea as $celda){                    
-                echo "<td>$celda</td>";
-            }
-            echo "<td>0</td>"; 
-            echo "<td>0,00</td>"; 
-            echo "<td><a href='?page=producto&act=edit&CODPRD={$linea['CODPRD']}'>editar</a></td>";   
-            echo "</td></tr>";
-        }            
-        echo '</tbody></table>';
-    }
-    
-    function doTableINV(){      // Tabla de Inventario
-        $sql = "SELECT p.`CODPRD`, `CODPROV`, `NOMPROD`, `DESCPROD1`, `LUGAR`, `CODMARC`, `PROCEDENCIA`, `CODUNID`, i.CANTPRD FROM `mproducto` p inner join binventario I on p.CODPRD=i.CODPRD; "; // , `VIGENCIA`, `MINPRD`
-        $dataSet = $this->conexion->Select($sql); 
-        echo '<table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Codigo<br>proveedor</th>
-            <th>Nombre</th>
-            <th>Descripcion</th>
-            <th>Lugar</th>
-            <th>Marca</th>
-            <th>Procedencia</th>
-            <th>Medida</th>
-            <th>En Inventario</th>
-            <th>Cantidad</th>
-            <th>Precio<br>Unitario</th>
-            <th>Ingresar </th>   
-          </tr>
-        </thead>
-        <tbody>';             
-        foreach ($dataSet as $linea){
-            echo "<tr>";
-            foreach($linea as $celda){                    
-                echo "<td>$celda</td>";
-            }
-            echo "
-            <form action='?page=productos&act=add&CODPRD={$linea['CODPRD']}' method='post' id='igreso{$linea['CODPRD']}'>
-            <td><input type='number' name='CANTIDAD' value='0'></td>
-            <td><input type='text' name='PRECIO' placeholder='0.00'></td>
-            <td><button type='submit' form='igreso{$linea['CODPRD']}' value='Submit'>+</button></td>
-            </form>
-                    ";
-            echo "</tr>";
-        }            
-        echo '</tbody></table>';
-    }
+	public function getWea(){
+		//print ("en w3a");
+			return $this->conexion->wea("mproducto");
+	}
+	public function getAll(){
+		$sql="SELECT COLUMN_NAME, DATA_TYPE, COLUMN_COMMENT, COLUMN_KEY
+		FROM INFORMATION_SCHEMA.COLUMNS
+		WHERE TABLE_SCHEMA = 'sial_demo' AND TABLE_NAME = 'mproducto';" ;           
+		return $this->conexion->Select($sql); 
+	}
+	function doForm($DataSet){
+		echo '<form action="mproducto.php" method="post">';
+		foreach ($DataSet as $data) {
+			//  echo "$nombre : $valor\n";
+			$titulo=$placeholder="";
+			list($titulo,$placeholder)= explode("|",$data["COLUMN_COMMENT"].";");
+			$tipo = (in_array($data["DATA_TYPE"], array("int","decimal")))?"number":"text";
+	
+			$nombre= $data["COLUMN_NAME"];
+			echo $titulo.":<input type=\"{$tipo}\" name=\"{$nombre}\" value=\"\" placeholder=\"{$placeholder}\"><br>";
+		}
+		echo "<input type=\"submit\"></form>";
+	}
+	function doTableProd(){     //Tabla de productos
+		$sql = "Select * from vw_productos ";
+		$DataSet = $this->conexion->Select($sql); 
+		echo '<table class="table table-striped">
+		<thead>
+		  <tr>
+		  <th>CODPRD</th>
+		  <th>CODPROV</th>
+			<th>NOMPROD</th>
+			<th>DESCPROD1</th>
+			<th>LUGAR</th>
+			<th>PROCEDENCIA</th>
+			<th>CODUNID</th>
+			<th>CODMARC</th>
+			<th>Cantidad</th>   
+			<th>Unitario</th>   
+			<th>Editar</th>
+		  </tr>
+		</thead>
+		<tbody>';             
+		foreach ($DataSet as $linea){
+			echo "<tr>";
+			foreach($linea as $celda){                    
+				echo "<td>$celda</td>";
+			}
+			echo "<td>0</td>"; 
+			echo "<td>0,00</td>"; 
+			echo "<td><a href='?page=producto&act=edit&CODPRD={$linea['CODPRD']}'>editar</a></td>";   
+			echo "</td></tr>";
+		}            
+		echo '</tbody></table>';
+	}
+	
+	function doTableINV(){      // Tabla de Inventario
+		$sql = "SELECT
+					p.`CODPRD`,
+					`CODPROV`,
+					`NOMPROD`,
+					`DESCPROD1`,
+					`LUGAR`,
+					ma.DESCMARC,
+					`PROCEDENCIA`,
+					me.ABREUNID,
+					i.CANTPRD,
+					i.UNITPRD,
+					p.`MINPRD`
+				FROM
+					`mproducto` p
+				INNER JOIN binventario I ON
+					p.CODPRD = i.CODPRD
+				INNER JOIN tmarca ma ON
+					p.CODMARC = ma.CODMARC
+				INNER JOIN tmedida me ON
+					p.CODUNID = me.CODUNID;
+				WHERE 
+					p.`VIGENCIA`=1S	"; // , `VIGENCIA`, `MINPRD`
+		$dataSet = $this->conexion->Select($sql); 
+		echo '<table class="table table-striped table-responsive">
+		<thead>
+		  <tr>
+			<th>Id</th>
+			<th>Codigo<br>proveedor</th>
+			<th>Nombre</th>
+			<th>Descripcion</th>
+			<th>Lugar</th>
+			<th>Marca</th>
+			<th>Procedencia</th>
+			<th>Medida</th>
+			<th>En Inventario</th>
+			<th>Precio<br>Unitario</th>
+			<th>Cantidad</th>
+			<th>Precio<>Unitario</th>
+			<th>Ingresar </th>
+		  </tr>
+		</thead>
+		<tbody>';
+		foreach ($dataSet as $linea){
+			$dataX = array_slice($linea,0,10);
+			$warning =  ($linea['CANTPRD']>$linea['MINPRD'])?"":"class='warning'";
+			echo "<tr $warning>";
+			foreach($dataX as $celda){                    
+				echo "<td>$celda</td>";
+			}
+			echo "
+			<form action='?page=productos&act=add&CODPRD={$linea['CODPRD']}' method='post' id='igreso{$linea['CODPRD']}'>
+			<td><input type='number' name='CANTIDAD' min='1' value='0'></td>
+			<td><input type='text' name='PRECIO' placeholder='0.00'></td>
+			<td><button type='submit' form='igreso{$linea['CODPRD']}' value='Submit'>+</button></td>
+			</form>
+					";
+			echo "</tr>";
+		}            
+		echo '</tbody></table>';
+	}
 
 
 // Controles de Formulario
-    function doListMarca($id){        
-        $sql ="SELECT * from tmarca "; ///Modificar5
-        $DataSet = $this->conexion->Select($sql);
-        echo '<select class="form-control" name="CODMARC">';
-        echo  ($id==0)?'<option value="0">Select...</option>':'';
-        foreach ($DataSet as $data){
-            $selected = ($data['CODMARC']==$id)?'Selected':'';
-            echo "<option value='{$data['CODMARC']}' $selected >{$data['DESCMARC']}</option>";
-        }
-        echo '</select>';
-    }
-    function doListMedida($id){        
-        $sql ="SELECT * from tmedida "; ///Modificar5
-        $DataSet = $this->conexion->Select($sql);
-        echo '<select class="form-control" name="CODUNID">';
-        echo ($id==0)?'<option value="0">Select...</option>':'';        
-        foreach ($DataSet as $data){
-            $selected = ($data['CODUNID']==$id)?'Selected':'';
-            echo "<option value='{$data['CODUNID']}' $selected >{$data['ABREUNID']}</option>";
-        }            
-        echo '</select>';
-    }
-    function doListVigencia($id){
-        echo '<select class="form-control" name="VIGENCIA">';
-        if($id==1)
-            echo"<option value='1' selected>Vigente</option>            
-            <option value='0'>Descontinuado</option>";
-        else
-            echo"<option value='1'>Vigente</option>            
-            <option value='0' selected>Descontinuado</option>";
-        echo"</select>";
-    }
+	function doListMarca($id){        
+		$sql ="SELECT * from tmarca "; ///Modificar5
+		$DataSet = $this->conexion->Select($sql);
+		echo '<select class="form-control" name="CODMARC">';
+		echo  ($id==0)?'<option value="0">Select...</option>':'';
+		foreach ($DataSet as $data){
+			$selected = ($data['CODMARC']==$id)?'Selected':'';
+			echo "<option value='{$data['CODMARC']}' $selected >{$data['DESCMARC']}</option>";
+		}
+		echo '</select>';
+	}
+	function doListMedida($id){        
+		$sql ="SELECT * from tmedida "; ///Modificar5
+		$DataSet = $this->conexion->Select($sql);
+		echo '<select class="form-control" name="CODUNID">';
+		echo ($id==0)?'<option value="0">Select...</option>':'';        
+		foreach ($DataSet as $data){
+			$selected = ($data['CODUNID']==$id)?'Selected':'';
+			echo "<option value='{$data['CODUNID']}' $selected >{$data['ABREUNID']}</option>";
+		}            
+		echo '</select>';
+	}
+	function doListVigencia($id){
+		echo '<select class="form-control" name="VIGENCIA">';
+		if($id==1)
+			echo"<option value='1' selected>Vigente</option>            
+			<option value='0'>Descontinuado</option>";
+		else
+			echo"<option value='1'>Vigente</option>            
+			<option value='0' selected>Descontinuado</option>";
+		echo"</select>";
+	}
 
 
 

@@ -1,29 +1,106 @@
 <?php
-$mi_clase = new mproducto();
-
-echo '<pre>';
-
-//$_SESSION['carrito']=array();
+$objProd = new mproducto();
+$objHmob;
+$objBmob;
+//$_SESSION=array();
 if(!empty($_POST)){
-    if(!empty($_GET['act']))
-        if($_GET['act']=="add"){
-            if(empty($_SESSION['carrito'])){$_SESSION['carrito']=array();}
-            $arrX = $_SESSION['carrito'];
-            //print_r($arrX);
+	if(!empty($_GET['act']))
+		if($_GET['act']=="add"){
+			if(empty($_SESSION['ingreso'])){$_SESSION['ingreso']=array();}
+			$_SESSION['ingreso'][$_GET['CODPRD']]=array('CANTIDAD'=> $_POST['CANTIDAD'],'PRECIO'=>$_POST['PRECIO']);
+		}elseif($_GET['act']=="submit"){
+			echo '<pre>';
+			$objHmob = new hmovimiento();
+			$objBmob = new bmovimiento();
 
-            $arr =array('CODPRD'=>$_GET['CODPRD'],'CANTIDAD'=> $_POST['CANTIDAD'],'PRECIO'=>$_POST['PRECIO']);                        
-            //print_r($arr);
+			$IDIngreso = $objHmob->Ingreso($_POST['DESCGLOS'],$_POST['ttipoope']);
+			//$IDIngreso = $objHmob->Ingreso('Descripcion Glosa',1);
+			echo "<br>Id ingreso $IDIngreso <br>";
+			
+			foreach($_SESSION['ingreso'] as $IdProd=>$Detalles ){
+				$post=array();
+				$post['IDMOV']= $IDIngreso ;
+				//$post['IDDETVENTA']=  ;
+				$post['CODPRD']= $IdProd ;
+				$post['GLOSAPRD']= '' ;
+				$post['CANTPRD']= $Detalles['CANTIDAD'] ;
+				$post['UNITPRD']= $Detalles['PRECIO'] ;
+				$post['TOTUNIT']= $Detalles['PRECIO']*$Detalles['CANTIDAD'] ;
+				
+				$IDDetIngreso = $objBmob->Ingreso($post);
+				print_r($IDDetIngreso);
+			}	
+			echo '</pre>';		
+			$_SESSION['ingreso']=array();
 
-            array_push($arrX,$arr);       
-            //print_r($arrX);
-            
-            $_SESSION['carrito']= $arrX;
-        }
+			//*/
+		}elseif($_GET['act']=="del"){
+			unset($_SESSION['ingreso'][$_GET['CODPRD']]);
+		}
+		
 }
 
-  if(!empty($_SESSION['carrito'])){print_r($_SESSION['carrito']);}
-echo '</pre>';
+if(!empty($_SESSION['ingreso'])){ ?>
 
+	<div class="row">
+		<div class="col-md-6">
+			<form class="form-horizontal" action="?page=productos&act=submit" method="post">
+			<div class="form-group">
+				<label for="DESCGLOS" class="col-sm-2 control-label">Glosa</label>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" name="DESCGLOS" id="DESCGLOS" placeholder="Glosa" value="">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="ttipoope" class="col-sm-2 control-label">Tipo Ingreso</label>
+				<div class="col-sm-4">
 
-$mi_clase->doTableINV(); 
-?>
+					<?php 		
+					$objHmob = new hmovimiento();					
+					$objHmob->doListTmov(1,1);  
+					?>
+
+				</div>
+			</div>			
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-4">
+				<button type="submit" class="btn btn-default">Ingresar</button>
+				</div>
+			</div>
+			</form>
+		</div>
+		<div class="col-md-6">
+			
+			<table class="table table-striped table-responsive">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Nombre</th>
+					<th>Cantidad</th>
+					<th>Precio<br>Unitario</th>
+					<th>Borrar</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+					foreach ($_SESSION['ingreso'] as $key => $value) {
+						
+						echo "<tr>
+						<form action='?page=productos&act=del&CODPRD={$key}' method='post' id='igreso{$key}'>
+						
+							<td><input type='hidden' id='CANTIDAD' name='CANTIDAD' value='$key'></td>
+							<td> Nombre X </td>
+							<td>{$value['CANTIDAD']}</td>
+							<td>{$value['PRECIO']}</td>
+							<td><button type='submit' form='igreso{$key}' value='Submit'>-</button></td>
+						</form>
+						</tr>";
+					}
+				?>
+			</tbody>
+			</table>
+		</div>
+	</div>
+<?php
+}
+ $objProd->doTableINV(); ?>
