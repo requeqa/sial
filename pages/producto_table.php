@@ -20,12 +20,8 @@ if(!empty($_POST)){
             $_SESSION['carrito']= $arrX;
         }
 }
-//    Echo '---GET---';
-//    print_r($_GET);
- //   Echo '---POST---';
-  //  print_r($_POST);
-  //  Echo '---Session---';
-  if(!empty($_SESSION['carrito'])){print_r($_SESSION['carrito'])};
+
+  if(!empty($_SESSION['carrito'])){print_r($_SESSION['carrito']);}
 echo '</pre>';
 
 
