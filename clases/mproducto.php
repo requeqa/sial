@@ -157,7 +157,7 @@ class mproducto extends conexion{
 			<th>En Inventario</th>
 			<th>Precio<br>Unitario</th>
 			<th>Cantidad</th>
-			<th>Precio<>Unitario</th>
+			<th>Precio<br>Unitario</th>
 			<th>Ingresar </th>
 		  </tr>
 		</thead>
