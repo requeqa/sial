@@ -15,6 +15,10 @@ class mproducto extends conexion{
 
 	//  --  Columnas  --
 	private $conexion;
+	private const VISTAPRD = "SELECT * from vw_productos order by 2 ";
+
+
+
 	public function __construct(){
 		$this->conexion = new conexion();    
 	}
@@ -55,25 +59,31 @@ class mproducto extends conexion{
 		else return print_r($resUpdate);
 	}
 	public function getProductos(){
-		$sql ="SELECT * from vw_productos "; ///Modificar4
+		$sql ="SELECT * from vw_productos order by 2"; ///Modificar4
 		return $this->conexion->Select($sql); 
 	}
 	public function getProducto(int $ID){ //Llamada para cargar formulario
 		$sql ="SELECT * from mproducto Where CODPRD = $ID"; ///Modificar5
 		return $this->conexion->Select($sql); 
 	}
+	public function getInv(int $ID){ //Llamada para cargar formulario
+		$sql ="SELECT * from mproducto Where CODPRD = $ID"; ///Modificar5
+		return $this->conexion->Select($sql); 
+	}
+
+
 
 	public function getWea(){
 		//print ("en w3a");
 			return $this->conexion->wea("mproducto");
 	}
-	public function getAll(){
+	public function getAll(){	// GET COLS
 		$sql="SELECT COLUMN_NAME, DATA_TYPE, COLUMN_COMMENT, COLUMN_KEY
 		FROM INFORMATION_SCHEMA.COLUMNS
 		WHERE TABLE_SCHEMA = 'sial_demo' AND TABLE_NAME = 'mproducto';" ;           
 		return $this->conexion->Select($sql); 
 	}
-	function doForm($DataSet){
+	function doForm($DataSet){	//	REVIEW
 		echo '<form action="mproducto.php" method="post">';
 		foreach ($DataSet as $data) {
 			//  echo "$nombre : $valor\n";
@@ -86,9 +96,10 @@ class mproducto extends conexion{
 		}
 		echo "<input type=\"submit\"></form>";
 	}
+
 	function doTableProd(){     //Tabla de productos
-		$sql = "Select * from vw_productos ";
-		$DataSet = $this->conexion->Select($sql); 
+		$sql = SELF::VISTAPRD;
+		$DataSet = $this->conexion->Select(SELF::VISTAPRD); 
 		echo '<table class="table table-striped">
 		<thead>
 		  <tr>
@@ -117,9 +128,8 @@ class mproducto extends conexion{
 			echo "</td></tr>";
 		}            
 		echo '</tbody></table>';
-	}
-	
-	function doTableINV(){      // Tabla de Inventario
+	}	
+	function doTableMOV($page){      // Tabla de Movimeinto
 		$sql = "SELECT
 					p.`CODPRD`,
 					`CODPROV`,
@@ -129,13 +139,11 @@ class mproducto extends conexion{
 					ma.DESCMARC,
 					`PROCEDENCIA`,
 					me.ABREUNID,
-					i.CANTPRD,
-					i.UNITPRD,
+					p.CANTPRD,
+					p.UNITPRD,
 					p.`MINPRD`
 				FROM
 					`mproducto` p
-				INNER JOIN binventario I ON
-					p.CODPRD = i.CODPRD
 				INNER JOIN tmarca ma ON
 					p.CODMARC = ma.CODMARC
 				INNER JOIN tmedida me ON
@@ -170,17 +178,82 @@ class mproducto extends conexion{
 				echo "<td>$celda</td>";
 			}
 			echo "
-			<form action='?page=ingreso&act=add&CODPRD={$linea['CODPRD']}' method='post' id='igreso{$linea['CODPRD']}'>
-			<td><input type='number' name='CANTIDAD' min='1' value='0' size='5'></td>
+			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='igreso{$linea['CODPRD']}'>
+			<td><input type='number' name='CANTIDAD' min='1' max='{$linea['CANTPRD']}' value='0' size='5'></td>
 			<td><input type='text' name='PRECIO' placeholder='0.00' size='5'></td>
-			<td><button type='submit' form='igreso{$linea['CODPRD']}' value='Submit'>+</button></td>
+			<td><button type='submit' form='igreso{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
 			</form>
 					";
 			echo "</tr>";
 		}            
 		echo '</tbody></table>';
 	}
-
+	function doTableTienda($page,$Buscar){      // Tabla de Movimeinto
+		$sql = "SELECT
+					p.`CODPRD`,
+					`CODPROV`,
+					`NOMPROD`,
+					`DESCPROD1`,
+					`LUGAR`,
+					ma.DESCMARC,
+					`PROCEDENCIA`,
+					me.ABREUNID,
+					p.CANTPRD,
+					p.UNITPRD,
+					p.`MINPRD`
+				FROM
+					`mproducto` p
+				INNER JOIN tmarca ma ON
+					p.CODMARC = ma.CODMARC
+				INNER JOIN tmedida me ON
+					p.CODUNID = me.CODUNID;
+				WHERE 
+					p.`VIGENCIA`=1 ".(($Buscar=="")?";":	
+				"AND (`CODPROV`= $Buscar
+				OR	`NOMPROD` = $Buscar
+				OR	`DESCPROD1`= $Buscar);");	// , `VIGENCIA`, `MINPRD`, Buscar
+					
+					
+		$dataSet = $this->conexion->Select($sql); 
+		echo '<table class="table table-striped table-responsive">
+		<thead>
+		  <tr>
+			<th>Id</th>
+			<th>Codigo<br>proveedor</th>
+			<th>Nombre</th>
+			<th>Descripcion</th>
+			<th>Lugar</th>
+			<th>Marca</th>
+			<th>Procedencia</th>
+			<th>Medida</th>
+			<th>Stock</th>
+			<th>Precio/U</th>
+			<th>Cantidad</th>
+			<th>Precio/U</th>
+			<th>Desc.</th>
+			<th>Ingresar</th>
+		  </tr>
+		</thead>
+		<tbody>';
+		foreach ($dataSet as $linea){
+			$dataX = array_slice($linea,0,10);
+			$warning =  ($linea['CANTPRD']>$linea['MINPRD'])?"":"class='warning'";
+			echo "<tr $warning>";
+			foreach($dataX as $celda){                    
+				echo "<td>$celda</td>";
+			}
+			echo "
+			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='igreso{$linea['CODPRD']}'>
+			<td><input type='number' name='CANTIDAD' min='1' max='{$linea['CANTPRD']}' value='0' size='5'></td>
+			<td><input type='text' name='PRECIO' placeholder='0.00' size='5'></td>
+			<td><input type='text' name='DESC' placeholder='Descripcion' size='5'></td>
+			<td><button type='submit' form='igreso{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
+			</form>
+					";
+			echo "</tr>";
+		}            
+		echo '</tbody></table>';
+	}
 
 // Controles de Formulario
 	function doListMarca($id){        

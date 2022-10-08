@@ -18,7 +18,7 @@ class hmovimiento extends conexion{
 	public function __construct(){
 		$this->conexion = new conexion();    
 	}
-	public function Nuevo($post){
+	public function Nuevo($post){ 				//	Insert H Movimiento
 		//$this->FECHA = $post['FECHA'];
 		$this->DESCGLOS = $post['DESCGLOS'];
 		//$this->ABROPE = $post['ABROPE'];
@@ -27,40 +27,54 @@ class hmovimiento extends conexion{
 		$this->CODOPE = $post['CODOPE'];
 		$this->TIPMOV = $post['TIPMOV'];
 		$this->IDSUC = $post['IDSUC'];
-
-		$sql = "INSERT INTO `hmovimiento` (`FECHA`, `DESCGLOS`, `OPNULO`, `IDVENTA`, `CODOPE`, `TIPMOV`, `IDSUC`) VALUES (now(),?,?,null,?,?,?)";
 		//"('1', '2022-09-16', 'PRUEBA', '1', NULL, '1', '1', '1');"
-		$arrData = array( 
-			//$this->FECHA,
-			$this->DESCGLOS,
-			//$this->ABROPE,
-			$this->OPNULO,
-			//$this->IDVENTA,
-			$this->CODOPE,
-			$this->TIPMOV,
-			$this->IDSUC
-
-		);
-		echo $sql."<br>";
-		print_r($arrData);
-		return 2;
-//		return $this->conexion->Insert($sql, $arrData);
+		$sql;	$arrData;		///Instanciar variables a nivel metodo
+		if($this->IDVENTA==0){	// Id
+			$sql = "INSERT INTO `hmovimiento` (`FECHA`, `DESCGLOS`, `OPNULO`, `IDVENTA`, `CODOPE`, `TIPMOV`, `IDSUC`) VALUES (now(),?,?,null,?,?,?)";
+			$arrData = array( 
+				$this->DESCGLOS,
+				$this->OPNULO,
+				//$this->IDVENTA,	//null
+				$this->CODOPE,
+				$this->TIPMOV,
+				$this->IDSUC
+			);
+		}else{
+			$sql = "INSERT INTO `hmovimiento` (`FECHA`, `DESCGLOS`, `OPNULO`, `IDVENTA`, `CODOPE`, `TIPMOV`, `IDSUC`) VALUES (now(),?,?,?,?,?,?)";
+			$arrData = array( 
+				$this->DESCGLOS,
+				$this->OPNULO,
+				$this->IDVENTA,
+				$this->CODOPE,
+				$this->TIPMOV,
+				$this->IDSUC
+			);
+		}
+		//echo $sql."<br>";	print_r($arrData);
+		//return 2;
+		return $this->conexion->Insert($sql, $arrData);
 	}
 
-	public function Ingreso($glosa,$tMovimiento){		
-		$arrData = array(
-			$glosa,			//	'DESCGLOS'
-			1,				//	'OPNULO'
-			1,				//	'CODOPE'
-			$tMovimiento,	//	'TIPMOV'
-			1				//	'IDSUC'
-		);		//*/
-		$sql = "INSERT INTO `hmovimiento` (`FECHA`, `DESCGLOS`, `OPNULO`, `IDVENTA`, `CODOPE`, `TIPMOV`, `IDSUC`) VALUES (now(),?,?,null,?,?,?)";
-		
-		echo $sql."<br>";
-		print_r($arrData);
-		//return "24";
-		return $this->conexion->Insert($sql, $arrData);
+	public function Ingreso($glosa,$tMovimiento){			//Ingreso	--	OK
+		$post = array();
+		$post['DESCGLOS']= $glosa;
+		$post['OPNULO']= 1;
+		$post['IDVENTA']= 0;
+		$post['CODOPE']= $tMovimiento;
+		$post['TIPMOV']= 1;
+		$post['IDSUC']= 1;
+		return $this->Nuevo($post);
+	}
+
+	public function Salida($glosa,$tMovimiento,$venta){		//	Salida	--	OK
+		$post = array();
+		$post['DESCGLOS']= $glosa;
+		$post['OPNULO']= 1; 
+		$post['IDVENTA']= $venta;
+		$post['CODOPE']= $tMovimiento;
+		$post['TIPMOV']= 2;
+		$post['IDSUC']= 1;
+		return $this->Nuevo($post);
 	}
 
 
@@ -93,7 +107,7 @@ class hmovimiento extends conexion{
 	public function doListTmov($tmov,$id){    
 		$sql = "SELECT `CODOPE`,`DESCOPE` FROM `ttipoope` WHERE `TIPMOV`=$tmov;"; ///Modificar5
 		$DataSet = $this->conexion->Select($sql);
-		echo '<select class="form-control" name="ttipoope" id="ttipoope" readonly>';
+		echo '<select class="form-control" name="ttipoope" id="ttipoope" >'; //readonly
 		echo ($id==0)?'<option value="0">Select...</option>':'';        
 		foreach ($DataSet as $data){
 			$selected = ($data['CODUNID']==$id)?'Selected':'';
@@ -102,7 +116,11 @@ class hmovimiento extends conexion{
 		echo '</select>';
 	}
    
-
+	public function Venta ($CODLISTPRE,$DESCCLIENT){
+		$arrData = array($CODLISTPRE,$DESCCLIENT);	
+		$sql = "INSERT INTO `hventas` (`IDVENTA`, `CODLISTPRE`, `OPNULO`, `DESCCLIENT`, `FECHAVENT`) VALUES (NULL, ?, \'1\', ?, current_timestamp());";
+		return $this->conexion->Insert($sql,$arrData);
+	}
 
 
 

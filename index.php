@@ -71,31 +71,31 @@ require_once("autoload.php");
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
+        <div class="col-sm-3 col-md-1 sidebar">
           <ul class="nav nav-sidebar">
-            <!-- 
+            <!--
               <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            -->
-            <li <?php echo ($page=="main")?"class=\"active\"":""; ?> ><a href="?page=main">Overview</a></li>
-            <li <?php echo ($page=="report")?"class=\"active\"":""; ?> ><a href="?page=report">Report</a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Venta</a></li>
-            <li><a href="#">Export</a></li>
+              <li <?php echo ($page=="main")?"class=\"active\"":""; ?> ><a href="?page=main">Overview</a></li>
+              <li <?php echo ($page=="report")?"class=\"active\"":""; ?> ><a href="?page=report">Report</a></li>
+              <li><a href="#">Reports</a></li>
+              <li><a href="#">Venta</a></li>
+              <li><a href="#">Export</a></li>
+             -->
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="?page=producto">Nuevo Producto</a></li>
-            <li><a href="?page=productos">Productos</a></li>
-            <li><a href="?page=ingreso">Ingreso de Producto</a></li>
-            <li><a href="?page=salida">Salida de Producto</a></li>
-            <li><a href="?page=movimientos">Movimiento de Productos</a></li>
+            <li <?php echo ($page=="producto")?"class=\"active\"":""; ?> ><a href="?page=producto">Nuevo Producto</a></li>
+            <li <?php echo ($page=="productos")?"class=\"active\"":""; ?> ><a href="?page=productos">Productos</a></li>
+            <li <?php echo ($page=="ingreso")?"class=\"active\"":""; ?> ><a href="?page=ingreso">Ingreso de Producto</a></li>
+            <li <?php echo ($page=="salida")?"class=\"active\"":""; ?> ><a href="?page=salida">Salida de Producto</a></li>
+            <li <?php echo ($page=="movimientos")?"class=\"active\"":""; ?> ><a href="?page=movimientos">Movimiento de Productos</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="?page=venta">Venta</a></li>
-            <li><a href="?page=venta&act=off">Vaciar Venta</a></li>
+            <li <?php echo ($page=="venta")?"class=\"active\"":""; ?> ><a href="?page=venta">Venta</a></li>
+            <li <?php echo ($page=="off")?"class=\"active\"":""; ?> ><a href="?page=ventaOff&act=off">Vaciar Venta</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="?page=medida">Unidad de medida</a></li>
-            <li><a href="?page=marca">Marca</a></li>
+            <li <?php echo ($page=="medida")?"class=\"active\"":""; ?> ><a href="?page=medida">Unidad de medida</a></li>
+            <li <?php echo ($page=="marca")?"class=\"active\"":""; ?> ><a href="?page=marca">Marca</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

@@ -1,5 +1,5 @@
 <?php
-define("MODULO","ingreso");
+define("MODULO","salida");	//echo MODULO;
 $objProd = new mproducto();
 $objHmob;
 $objBmob;
@@ -8,15 +8,18 @@ if(!empty($_POST)){
 	if(!empty($_GET['act']))
 		if($_GET['act']=="add"){
 			if(empty($_SESSION[MODULO])){$_SESSION[MODULO]=array();}
-			$_SESSION[MODULO][$_GET['CODPRD']]=array('CANTIDAD'=> $_POST['CANTIDAD'],'PRECIO'=>$_POST['PRECIO']);
+			$_SESSION[MODULO][$_GET['CODPRD']]=array(
+				'CANTIDAD'=> $_POST['CANTIDAD'],
+				'PRECIO'=>	($_POST['PRECIO']=="")?0:$_POST['PRECIO']);
 		}elseif($_GET['act']=="submit"){
 			echo '<pre>';
 			$objHmob = new hmovimiento();			
-			$IDIngreso = $objHmob->Ingreso($_POST['DESCGLOS'],$_POST['ttipoope']);
+			$IDIngreso = $objHmob->Salida($_POST['DESCGLOS'],$_POST['ttipoope'],0);
 			//$IDIngreso = $objHmob->Ingreso('Descripcion Glosa',1);
-			//echo "<br>Id ingreso $IDIngreso <br>";
+			//echo "<br>Id Salida $IDIngreso <br>";
 			
 			$objBmob = new bmovimiento();
+			//print_r ($_SESSION[MODULO]);
 			foreach($_SESSION[MODULO] as $IdProd=>$Detalles ){
 				$post=array();
 				$post['IDMOV']= $IDIngreso ;
@@ -24,10 +27,10 @@ if(!empty($_POST)){
 				$post['GLOSAPRD']= '' ;
 				$post['CANTPRD']= $Detalles['CANTIDAD'] ;
 				$post['UNITPRD']= $Detalles['PRECIO'] ;
-				$post['TOTUNIT']= $Detalles['PRECIO']*$Detalles['CANTIDAD'] ;				
-				//if($_POST['ttipoope']==1)	$post['OP']= 1 ;
-				$IDDetIngreso = $objBmob->Ingreso($post);
-				//print_r($IDDetIngreso);
+				$post['TOTUNIT']= $Detalles['PRECIO']*$Detalles['CANTIDAD'] ;			
+				//if($_POST['ttipoope']==1)	$post['OP']= 1 ;				
+				$IDDetSalida = $objBmob->Salida($post);
+				//print_r($IDDetSalida);
 			}	
 			echo '</pre>';		
 			$_SESSION[MODULO]=array();
@@ -39,11 +42,11 @@ if(!empty($_POST)){
 		
 }
 
-if(!empty($_SESSION[MODULO])){ ?>
+ ?>
 
 	<div class="row">
 		<div class="col-md-6">
-			<form class="form-horizontal" action="?page=ingreso&act=submit" method="post">
+			<form class="form-horizontal" action="?page=salida&act=submit" method="post">
 			<div class="form-group">
 				<label for="DESCGLOS" class="col-sm-2 control-label">Glosa</label>
 				<div class="col-sm-4">
@@ -51,12 +54,12 @@ if(!empty($_SESSION[MODULO])){ ?>
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="ttipoope" class="col-sm-2 control-label">Tipo Ingreso</label>
+				<label for="ttipoope" class="col-sm-2 control-label">Tipo Salida</label>
 				<div class="col-sm-4">
 
 					<?php 		
 					$objHmob = new hmovimiento();					
-					$objHmob->doListTmov(1,1);  
+					$objHmob->doListTmov(2,6);  
 					?>
 
 				</div>
@@ -82,12 +85,13 @@ if(!empty($_SESSION[MODULO])){ ?>
 			</thead>
 			<tbody>
 				<?php
+					if(!empty($_SESSION[MODULO]))
 					foreach ($_SESSION[MODULO] as $key => $value) {
 						
 						echo "<tr>
 						<form action='?page=".MODULO."&act=del&CODPRD={$key}' method='post' id='igreso{$key}'>
 						
-							<td><input type='hidden' id='CANTIDAD' name='CANTIDAD' value='$key'>$key</td>
+							<td><input type='hidden' id='CANTIDAD' name='CANTIDAD' value='$key'></td>
 							<td> Nombre X </td>
 							<td>{$value['CANTIDAD']}</td>
 							<td>{$value['PRECIO']}</td>
@@ -101,5 +105,7 @@ if(!empty($_SESSION[MODULO])){ ?>
 		</div>
 	</div>
 <?php
-}
- $objProd->doTableMOV(MODULO); ?>
+
+ $objProd->doTableTienda(MODULO,""); 
+ 
+ ?>

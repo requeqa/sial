@@ -3,7 +3,7 @@ if(!empty($_GET["page"]))
     switch ($_GET["page"]) {
         case 'producto':
             echo '<h1 class="page-header">Producto</h1>';
-            require_once 'pages/producto_form.php';
+            require_once 'pages/producto.php';
             break;
         
         case 'productos':
@@ -18,7 +18,7 @@ if(!empty($_GET["page"]))
             
         case 'salida':
             echo '<h1 class="page-header">Salida</h1>';
-            require_once 'pages/movimiento.php';
+            require_once 'pages/salida.php';
             break;
         
         case 'movimientos':
@@ -27,7 +27,7 @@ if(!empty($_GET["page"]))
             
         case 'venta':
             echo '<h1 class="page-header">Venta</h1>';
-                require_once 'pages/carrito.php';
+                require_once 'pages/venta.php';
                 break;
              
         case 'medida':

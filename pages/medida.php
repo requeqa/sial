@@ -34,11 +34,4 @@ if(!empty($_POST)){
 <p>
 <?php
 $mi_clase->doTable();
-
-
-echo '<pre>';
-print_r ($_POST);
-print_r ($_GET);
-echo '</pre>';
-
 ?>

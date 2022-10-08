@@ -14,4 +14,10 @@ class ponderacion extends conexion{
     public function __construct(){
         $this->conexion = new conexion();    
     }
+
+    //public function 
+
+
+
+
 }
