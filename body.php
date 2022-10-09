@@ -22,7 +22,7 @@ if(!empty($_GET["page"]))
             break;
         
         case 'movimientos':
-            # code...
+            require_once 'pages/movimientos.php';
             break;
             
         case 'venta':

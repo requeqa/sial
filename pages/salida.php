@@ -105,4 +105,4 @@ if(!empty($_SESSION[MODULO])){ ?>
 	</div>
 <?php
 }
- $objProd->doTableMOV(MODULO); ?>
+ $objProd->doTableMOV(MODULO,2); ?>

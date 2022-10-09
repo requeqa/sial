@@ -42,6 +42,7 @@ class mproducto extends conexion{
 
 		$sql = "INSERT INTO `dlistprecio` (`CODLISTPRE`, `DETPRECIO`, `CODPRD`, `PRECVENT`)VALUES (1,NULL,?,0),(2,NULL,?,0),(3,NULL,?,0),(4,NULL,?,0);";
 		$arrData = array($this->CODPRD,$this->CODPRD,$this->CODPRD,$this->CODPRD);
+		$this->conexion->Insert($sql, $arrData);
 		return $this->CODPRD;
 	}
 	public function Actualizar($post){
@@ -104,19 +105,20 @@ class mproducto extends conexion{
 		$DataSet = $this->conexion->Select(SELF::VISTAPRD); 
 		echo '<table class="table table-striped">
 		<thead>
-		  <tr>
-		  <th>CODPRD</th>
-		  <th>CODPROV</th>
+		<tr>
+			<th>CODPRD</th>
+			<th>CODPROV</th>
 			<th>NOMPROD</th>
 			<th>DESCPROD1</th>
 			<th>LUGAR</th>
 			<th>PROCEDENCIA</th>
-			<th>CODUNID</th>
-			<th>CODMARC</th>
-			<th>Cantidad</th>   
-			<th>Unitario</th>   
+			<th>U.MEDIDA</th>
+			<th>MARCA</th>
+			<th>STOCK</th>
+			<th>UNITARIO</th>
+			<th>TOTAL</th>
 			<th>Editar</th>
-		  </tr>
+		</tr>
 		</thead>
 		<tbody>';             
 		foreach ($DataSet as $linea){
@@ -124,14 +126,12 @@ class mproducto extends conexion{
 			foreach($linea as $celda){                    
 				echo "<td>$celda</td>";
 			}
-			echo "<td>0</td>"; 
-			echo "<td>0,00</td>"; 
 			echo "<td><a href='?page=producto&act=edit&CODPRD={$linea['CODPRD']}'>editar</a></td>";   
 			echo "</td></tr>";
 		}            
 		echo '</tbody></table>';
 	}	
-	function doTableMOV($page){      // Tabla de Movimeinto
+	function doTableMOV($page,$mov){      // Tabla de Movimeinto
 		$sql = "SELECT
 					p.`CODPRD`,
 					`CODPROV`,
@@ -179,9 +179,10 @@ class mproducto extends conexion{
 			foreach($dataX as $celda){                    
 				echo "<td>$celda</td>";
 			}
+			$max=($mov==2)?" max='{$linea['CANTPRD']}' ":"";
 			echo "
 			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='mov{$linea['CODPRD']}'>
-			<td><input type='number' name='CANTIDAD' min='1' max='{$linea['CANTPRD']}' value='0' size='5'></td>
+			<td><input type='number' name='CANTIDAD' min='1' $max value='0' size='5'></td>
 			<td><input type='text' name='PRECIO' placeholder='0.00' size='5'></td>
 			<td><button type='submit' form='mov{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
 			</form>
@@ -214,8 +215,8 @@ class mproducto extends conexion{
 			WHERE
 				p.`VIGENCIA` = 1 AND l.CODLISTPRE = $Lista ".(($Buscar=="")?";":	
 				"AND (`CODPROV` like '%{$Buscar}%'
-				OR	`NOMPROD` like '%{$Buscar}%'
-				OR	`DESCPROD1`like '%{$Buscar}%');");	// , `VIGENCIA`, `MINPRD`, Buscar
+				OR	`NOMPROD`	like '%{$Buscar}%'
+				OR	`DESCPROD1`	like '%{$Buscar}%');");	// , `VIGENCIA`, `MINPRD`, Buscar
 					
 					
 		$dataSet = $this->conexion->Select($sql); 
@@ -260,6 +261,51 @@ class mproducto extends conexion{
 		}            
 		echo '</tbody></table>';
 	}
+	function doMov(){
+		$sql = "SELECT hm.`IDMOV`, hm.`FECHA`, hm.`DESCGLOS`, m.DESCMOV, o.DESCOPE, hm.IDVENTA, IF(hm.`TIPMOV`=1 ,SUM(TOTUNIT), 0) as Ingreso, IF(hm.`TIPMOV`=2 ,SUM(TOTUNIT), 0) as Salida 
+		FROM hmovimiento hm inner JOIN bmovimiento bm on hm.IDMOV = bm.IDMOV inner JOIN ttipomov m on hm.TIPMOV = m.TIPMOV inner JOIN ttipoope o on hm.CODOPE = o.CODOPE GROUP BY 1 ORDER BY 2; ";
+		$dataSet = $this->conexion->Select($sql);
+		
+		echo '<table class="table table-striped table-responsive">
+		<thead>
+		  <tr>
+			<th>Fecha</th>
+			<th>Glosa</th>
+			<th>Movimiento</th>
+			<th>Operacion</th>
+			<th>Venta</th>
+			<th>Ingreso</th>
+			<th>Salida</th>
+			<th>Ver</th>			
+		  </tr>
+		</thead>
+		<tbody>';
+		foreach ($dataSet as $linea){
+			$dataX = array_slice($linea,1);
+			$warning = "" ;//($linea['CANTPRD']>$linea['MINPRD'])?"":"class='warning'";
+			echo "<tr $warning>";
+			foreach($dataX as $celda){                    
+				echo "<td>$celda</td>";
+			}
+/*			echo "
+			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='venta{$linea['CODPRD']}'>
+			<td>
+				<input type='hidden' name='CODPROV' value='{$linea['CODPROV']}' size='5' readonly>
+				<input type='hidden' name='PRECVENT' value='{$linea['PRECVENT']}' size='5' readonly>
+				<input type='number' name='CANTIDAD' min='1' max='{$linea['CANTPRD']}' value='0' size='5'>
+			</td>
+			<td><input type='text' name='GLOSAPRD' placeholder='Descripcion' size='15'></td>
+			<td><button type='submit' form='venta{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
+			</form>
+					";	//*/
+			echo "</tr>";
+		}            
+		echo '</tbody></table>';
+		
+
+
+	}
+
 
 // Controles de Formulario
 	function doListMarca($id){        
