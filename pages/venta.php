@@ -121,8 +121,7 @@ if(!empty($_POST)){
 			<tbody>
 				<?php
 					if(!empty($_SESSION[MODULO]))
-					foreach ($_SESSION[MODULO] as $key => $value) {
-						
+					foreach ($_SESSION[MODULO] as $key => $value) {						
 						echo "<tr>
 						<form action='?page=".MODULO."&act=del&CODPRD={$key}' method='post' id='carrito{$key}'>						
 							<td><input type='hidden' id='CANTIDAD' name='CANTIDAD' value='$key'></td>

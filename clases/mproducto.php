@@ -36,10 +36,12 @@ class mproducto extends conexion{
 		$arrData = array( $this->CODPROV, $this->NOMPROD,$this->DESCPROD1,$this->LUGAR,$this->PROCEDENCIA,$this->CODUNID,$this->CODMARC,$this->VIGENCIA);      ///Modificar2
 		$this->CODPRD = $this->conexion->Insert($sql, $arrData);
 		
-		$sql = "INSERT INTO `binventario` (`DETINVENT`, `IDSUC`, `CODPRD`, `CANTPRD`, `UNITPRD`, `TOTUNIT`) VALUES (null, '1',?,'0','0','0');";
-		$arrData = array($this->CODPRD);
-		$this->CODPRD = $this->conexion->Insert($sql, $arrData);
-		
+//		$sql = "INSERT INTO `binventario` (`DETINVENT`, `IDSUC`, `CODPRD`, `CANTPRD`, `UNITPRD`, `TOTUNIT`) VALUES (null, '1',?,'0','0','0');";
+//		$arrData = array($this->CODPRD);
+//		$this->CODPRD = $this->conexion->Insert($sql, $arrData);
+
+		$sql = "INSERT INTO `dlistprecio` (`CODLISTPRE`, `DETPRECIO`, `CODPRD`, `PRECVENT`)VALUES (1,NULL,?,0),(2,NULL,?,0),(3,NULL,?,0),(4,NULL,?,0);";
+		$arrData = array($this->CODPRD,$this->CODPRD,$this->CODPRD,$this->CODPRD);
 		return $this->CODPRD;
 	}
 	public function Actualizar($post){
