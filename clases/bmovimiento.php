@@ -63,9 +63,6 @@ class bmovimiento extends conexion{
 	}
 	
 
-
-
-
 	public function Nuevo($post){
 		$x= $this->SetVarsArr($post);
 		$arrData = $this->GetVarsArr();

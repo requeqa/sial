@@ -178,40 +178,42 @@ class mproducto extends conexion{
 				echo "<td>$celda</td>";
 			}
 			echo "
-			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='igreso{$linea['CODPRD']}'>
+			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='mov{$linea['CODPRD']}'>
 			<td><input type='number' name='CANTIDAD' min='1' max='{$linea['CANTPRD']}' value='0' size='5'></td>
 			<td><input type='text' name='PRECIO' placeholder='0.00' size='5'></td>
-			<td><button type='submit' form='igreso{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
+			<td><button type='submit' form='mov{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
 			</form>
 					";
 			echo "</tr>";
 		}            
 		echo '</tbody></table>';
 	}
-	function doTableTienda($page,$Buscar){      // Tabla de Movimeinto
+	function doTableTienda($page,$Buscar,$Lista){      // Tabla de Movimeinto
 		$sql = "SELECT
-					p.`CODPRD`,
-					`CODPROV`,
-					`NOMPROD`,
-					`DESCPROD1`,
-					`LUGAR`,
-					ma.DESCMARC,
-					`PROCEDENCIA`,
-					me.ABREUNID,
-					p.CANTPRD,
-					p.UNITPRD,
-					p.`MINPRD`
-				FROM
-					`mproducto` p
-				INNER JOIN tmarca ma ON
-					p.CODMARC = ma.CODMARC
-				INNER JOIN tmedida me ON
-					p.CODUNID = me.CODUNID;
-				WHERE 
-					p.`VIGENCIA`=1 ".(($Buscar=="")?";":	
-				"AND (`CODPROV`= $Buscar
-				OR	`NOMPROD` = $Buscar
-				OR	`DESCPROD1`= $Buscar);");	// , `VIGENCIA`, `MINPRD`, Buscar
+				p.`CODPRD`,
+				`CODPROV`,
+				`NOMPROD`,
+				`DESCPROD1`,
+				`LUGAR`,
+				ma.DESCMARC,
+				`PROCEDENCIA`,
+				me.ABREUNID,
+				p.CANTPRD,
+				l.PRECVENT,
+				p.`MINPRD`
+			FROM
+				`mproducto` p
+			INNER JOIN tmarca ma ON
+				p.CODMARC = ma.CODMARC
+			INNER JOIN tmedida me ON
+				p.CODUNID = me.CODUNID
+			INNER JOIN dlistprecio l ON
+				p.CODPRD = l.CODPRD
+			WHERE
+				p.`VIGENCIA` = 1 AND l.CODLISTPRE = $Lista ".(($Buscar=="")?";":	
+				"AND (`CODPROV` like '%{$Buscar}%'
+				OR	`NOMPROD` like '%{$Buscar}%'
+				OR	`DESCPROD1`like '%{$Buscar}%');");	// , `VIGENCIA`, `MINPRD`, Buscar
 					
 					
 		$dataSet = $this->conexion->Select($sql); 
@@ -229,7 +231,6 @@ class mproducto extends conexion{
 			<th>Stock</th>
 			<th>Precio/U</th>
 			<th>Cantidad</th>
-			<th>Precio/U</th>
 			<th>Desc.</th>
 			<th>Ingresar</th>
 		  </tr>
@@ -243,11 +244,14 @@ class mproducto extends conexion{
 				echo "<td>$celda</td>";
 			}
 			echo "
-			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='igreso{$linea['CODPRD']}'>
-			<td><input type='number' name='CANTIDAD' min='1' max='{$linea['CANTPRD']}' value='0' size='5'></td>
-			<td><input type='text' name='PRECIO' placeholder='0.00' size='5'></td>
-			<td><input type='text' name='DESC' placeholder='Descripcion' size='5'></td>
-			<td><button type='submit' form='igreso{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
+			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='venta{$linea['CODPRD']}'>
+			<td>
+				<input type='hidden' name='CODPROV' value='{$linea['CODPROV']}' size='5' readonly>
+				<input type='hidden' name='PRECVENT' value='{$linea['PRECVENT']}' size='5' readonly>
+				<input type='number' name='CANTIDAD' min='1' max='{$linea['CANTPRD']}' value='0' size='5'>
+			</td>
+			<td><input type='text' name='GLOSAPRD' placeholder='Descripcion' size='15'></td>
+			<td><button type='submit' form='venta{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
 			</form>
 					";
 			echo "</tr>";
@@ -266,7 +270,9 @@ class mproducto extends conexion{
 			echo "<option value='{$data['CODMARC']}' $selected >{$data['DESCMARC']}</option>";
 		}
 		echo '</select>';
+		
 	}
+
 	function doListMedida($id){        
 		$sql ="SELECT * from tmedida "; ///Modificar5
 		$DataSet = $this->conexion->Select($sql);
@@ -278,6 +284,7 @@ class mproducto extends conexion{
 		}            
 		echo '</select>';
 	}
+	
 	function doListVigencia($id){
 		echo '<select class="form-control" name="VIGENCIA">';
 		if($id==1)
@@ -287,6 +294,24 @@ class mproducto extends conexion{
 			echo"<option value='1'>Vigente</option>            
 			<option value='0' selected>Descontinuado</option>";
 		echo"</select>";
+	}
+	function doListPrecio($id){        
+		if($id==0){
+			$sql = "SELECT * FROM `tlistprecio`;";
+			$DataSet = $this->conexion->Select($sql);		
+			echo "<select class='form-control' name='CODLISTPRE'>";
+			foreach ($DataSet as $data){
+				$selected = ($data['CODLISTPRE']==$id)?'Selected':'';
+				echo "<option value='{$data['CODLISTPRE']}' >{$data['DESCLISTPRE']}</option>";
+			}            
+			echo '</select>';
+		}
+		else{			
+			$sql = "SELECT * FROM `tlistprecio` where `CODLISTPRE`= $id ;";
+			$DataSet = $this->conexion->Select($sql)[0];
+			echo "<input type='hidden' name='CODLISTPRE' id='CODLISTPRE' value='{$DataSet['CODLISTPRE']}' >";	
+			echo "<input type='text' class='form-control' value='{$DataSet['DESCLISTPRE']}' readonly >";
+		}		
 	}
 
 

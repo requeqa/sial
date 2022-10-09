@@ -1,5 +1,5 @@
 <?php
-define("MODULO","venta");	//echo MODULO;
+define("MODULO","salida");	//echo MODULO;
 $objProd = new mproducto();
 $objHmob;
 $objBmob;
@@ -46,7 +46,7 @@ if(!empty($_SESSION[MODULO])){ ?>
 
 	<div class="row">
 		<div class="col-md-6">
-			<form class="form-horizontal" action="?page=venta&act=submit" method="post">
+			<form class="form-horizontal" action="?page=salida&act=submit" method="post">
 			<div class="form-group">
 				<label for="DESCGLOS" class="col-sm-2 control-label">Glosa</label>
 				<div class="col-sm-4">

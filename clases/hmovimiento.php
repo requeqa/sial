@@ -116,9 +116,9 @@ class hmovimiento extends conexion{
 		echo '</select>';
 	}
    
-	public function Venta ($CODLISTPRE,$DESCCLIENT){
+	public function Venta ($DESCCLIENT,$CODLISTPRE){
 		$arrData = array($CODLISTPRE,$DESCCLIENT);	
-		$sql = "INSERT INTO `hventas` (`IDVENTA`, `CODLISTPRE`, `OPNULO`, `DESCCLIENT`, `FECHAVENT`) VALUES (NULL, ?, \'1\', ?, current_timestamp());";
+		$sql = "INSERT INTO `hventas` (`IDVENTA`, `CODLISTPRE`, `OPNULO`, `DESCCLIENT`, `FECHAVENT`) VALUES (NULL, ?, 1, ?, current_timestamp());";
 		return $this->conexion->Insert($sql,$arrData);
 	}
 

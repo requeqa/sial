@@ -13,7 +13,7 @@ if ( ! session_id() ) @ session_start();
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title>Dashboard Template for Bootstrap</title>
+    <title>SIAL</title>
 
     <!-- Bootstrap core CSS -->
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">
@@ -37,19 +37,16 @@ if ( ! session_id() ) @ session_start();
   <body>
   <?php    
 require_once("autoload.php");
-  
-  
-  
-  
+
   $page = (!empty($_GET["page"]))? $_GET["page"]:"";  ?>
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
+            <span class="icon-bar">3</span>
+            <span class="icon-bar">2</span>
+            <span class="icon-bar">1</span>
           </button>
           <a class="navbar-brand" href="">SIAL</a>
           
@@ -71,7 +68,7 @@ require_once("autoload.php");
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-1 sidebar">
+        <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <!--
               <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
@@ -85,13 +82,15 @@ require_once("autoload.php");
           <ul class="nav nav-sidebar">
             <li <?php echo ($page=="producto")?"class=\"active\"":""; ?> ><a href="?page=producto">Nuevo Producto</a></li>
             <li <?php echo ($page=="productos")?"class=\"active\"":""; ?> ><a href="?page=productos">Productos</a></li>
-            <li <?php echo ($page=="ingreso")?"class=\"active\"":""; ?> ><a href="?page=ingreso">Ingreso de Producto</a></li>
-            <li <?php echo ($page=="salida")?"class=\"active\"":""; ?> ><a href="?page=salida">Salida de Producto</a></li>
-            <li <?php echo ($page=="movimientos")?"class=\"active\"":""; ?> ><a href="?page=movimientos">Movimiento de Productos</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li <?php echo ($page=="venta")?"class=\"active\"":""; ?> ><a href="?page=venta">Venta</a></li>
             <li <?php echo ($page=="off")?"class=\"active\"":""; ?> ><a href="?page=ventaOff&act=off">Vaciar Venta</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li <?php echo ($page=="movimientos")?"class=\"active\"":""; ?> ><a href="?page=movimientos">Movimiento</a></li>
+            <li <?php echo ($page=="ingreso")?"class=\"active\"":""; ?> ><a href="?page=ingreso">Ingreso</a></li>
+            <li <?php echo ($page=="salida")?"class=\"active\"":""; ?> ><a href="?page=salida">Salida</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li <?php echo ($page=="medida")?"class=\"active\"":""; ?> ><a href="?page=medida">Unidad de medida</a></li>
@@ -135,7 +134,15 @@ require_once("autoload.php");
 
 
             ?>
+            
+            
           </div>
+          <div class="col-sm-4  col-md-4  main"><pre><h4>GET</h4>
+          <?php print_r ($_GET);?></pre></div>
+          <div class="col-sm-4  col-md-4  main"><pre><h4>POST</h4>
+          <?php print_r ($_POST);?></pre></div>
+          <div class="col-sm-4  col-md-4  main"><pre><h4>SESSION</h4>
+          <?php print_r ($_SESSION);?></pre></div>
         </div>
       </div>
     </div>
