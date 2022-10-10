@@ -19,7 +19,6 @@ if(!empty($_POST)){
 			$IDIngreso = $objHmob->Salida($_POST['DESCGLOS'],$_POST['ttipoope'],0);
 			
 			$objBmob = new bmovimiento();
-			//print_r ($_SESSION[MODULO]);
 			foreach($_SESSION[MODULO][BODY] as $IdProd=>$Detalles ){
 				$post=array();
 				$post['IDMOV']= $IDIngreso ;

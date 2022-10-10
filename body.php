@@ -8,7 +8,7 @@ if(!empty($_GET["page"]))
         
         case 'productos':
             echo '<h1 class="page-header">Ingreso</h1>';
-            require_once 'pages/ingreso.php';
+            require_once 'DEMOS/test.php';
             break;
         
         case 'ingreso':

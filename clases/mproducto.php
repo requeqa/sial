@@ -208,8 +208,7 @@ class mproducto extends conexion{
 			<td><input type='number' name='CANTIDAD' min='1' $max value='0' size='5'></td>".
 			(($mov==2)?"<input type='hidden' name='PRECIO' value ='{$linea['UNITPRD']}'>":"<td><input type='text' name='PRECIO' placeholder='0.00' size='5'></td>")."			
 			<td><button type='submit' form='mov{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
-			</form>
-					";
+			</form>";
 			echo "</tr>";
 		}            
 		echo '</tbody></table>';
