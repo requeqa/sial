@@ -42,7 +42,7 @@ if(!empty($_POST)){
 				$IDDetSalida = $objBmob->Salida($post);				
 				array_push($reciboDet, array_slice($post,2));				
 			}	
-			$_SESSION['Recibo']=array('VENTA'=>$IDVenta,'FECHA'=>date("Y-m-d H:i:s", strtotime('-6 hours'),'CLIENTE'=>$_POST['DESCCLIENT'],'VENTA'=>$IDVenta,'DETALLE'=>$reciboDet);	
+			$_SESSION['Recibo']=array('VENTA'=>$IDVenta,'FECHA'=>date("Y-m-d H:i:s", strtotime('-6 hours')),'CLIENTE'=>$_POST['DESCCLIENT'],'VENTA'=>$IDVenta,'DETALLE'=>$reciboDet);	
 			print_r($recibo);
 			echo '</pre>';					
 			unset($_SESSION[MODULO]);
@@ -108,7 +108,7 @@ echo "<tr><td colspan='3'></td><th>Total:</th><th>{$Tot}</th></tr>
 				<div class="form-group">
 					<div class="col-sm-offset-1 col-sm-2">
 						<?php
-							echo '<button type="submit" class="btn '.(empty($_SESSION[CLIENTE])?'btn-success':'btn-default').'" formaction="?page=venta&act=cli">'.(empty($_SESSION[CLIENTE])?'Iniciar':'Actualizar').'</button>';
+							echo '<button type="submit" class="btn '.(empty($_SESSION[CLIENTE])?'btn-primary':'btn-default').'" formaction="?page=venta&act=cli">'.(empty($_SESSION[CLIENTE])?'Iniciar':'Actualizar').'</button>';
 							//else { echo '<button type="submit" class="btn btn-default">Lleno</button>';}					
 						?>
 					</div>
@@ -119,8 +119,9 @@ echo "<tr><td colspan='3'></td><th>Total:</th><th>{$Tot}</th></tr>
 					<div class="col-sm-offset-1 col-sm-2">
 						<button type="submit" class="btn btn-primary">VENDER</button>
 					</div>
-					<?php	} ?>
-
+					<?php	} 
+					if(!empty($_SESSION['Recibo'])){
+					?>
 					<div class="col-sm-offset-1 col-sm-2">
 						<button type='button' class="btn btn-info" onclick='javascript:imprim2();'>Imprimir</button>
 						<script>
@@ -138,6 +139,7 @@ echo "<tr><td colspan='3'></td><th>Total:</th><th>{$Tot}</th></tr>
 							return true;}
 						</script>  
 					</div>
+					<?php }?>
 				</div>
 			</form>
 		</div>
