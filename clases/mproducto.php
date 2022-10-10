@@ -149,7 +149,7 @@ class mproducto extends conexion{
 		}            
 		echo '</tbody></table>';
 	}	
-	function doTableMOV($page,$mov){      // Tabla de Movimeinto
+	function doTableMOV($page,$mov,$Buscar){      // Tabla de Movimeinto
 		$sql = "SELECT
 					p.`CODPRD`,
 					`CODPROV`,
@@ -167,9 +167,13 @@ class mproducto extends conexion{
 				INNER JOIN tmarca ma ON
 					p.CODMARC = ma.CODMARC
 				INNER JOIN tmedida me ON
-					p.CODUNID = me.CODUNID;
+					p.CODUNID = me.CODUNID
 				WHERE 
-					p.`VIGENCIA`=1S	"; // , `VIGENCIA`, `MINPRD`
+					p.`VIGENCIA`=1 ".(($Buscar=="")?";":	
+				"AND (`CODPROV` like '%{$Buscar}%'
+				OR	`NOMPROD`	like '%{$Buscar}%'
+				OR	`DESCPROD1`	like '%{$Buscar}%');"); // , `VIGENCIA`, `MINPRD`
+				
 		$dataSet = $this->conexion->Select($sql); 
 		echo '<table class="table table-striped table-responsive">
 		<thead>
@@ -183,15 +187,16 @@ class mproducto extends conexion{
 			<th>Procedencia</th>
 			<th>Medida</th>
 			<th>En Inventario</th>
-			<th>Precio<br>Unitario</th>
+			'.(($mov==2)?'':'<th>Precio<br>Unitario</th>').'
 			<th>Cantidad</th>
-			<th>Precio<br>Unitario</th>
+			'.(($mov==2)?'':'<th>Precio<br>Unitario</th>').'
 			<th>Ingresar </th>
 		  </tr>
 		</thead>
 		<tbody>';
+		$canCols=($mov==2)?9:10;
 		foreach ($dataSet as $linea){
-			$dataX = array_slice($linea,0,10);
+			$dataX = array_slice($linea,0,$canCols);
 			$warning =  ($linea['CANTPRD']>$linea['MINPRD'])?"":"class='warning'";
 			echo "<tr $warning>";
 			foreach($dataX as $celda){                    
@@ -200,8 +205,8 @@ class mproducto extends conexion{
 			$max=($mov==2)?" max='{$linea['CANTPRD']}' ":"";
 			echo "
 			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='mov{$linea['CODPRD']}'>
-			<td><input type='number' name='CANTIDAD' min='1' $max value='0' size='5'></td>
-			<td><input type='text' name='PRECIO' placeholder='0.00' size='5'></td>
+			<td><input type='number' name='CANTIDAD' min='1' $max value='0' size='5'></td>".
+			(($mov==2)?"<input type='hidden' name='PRECIO' value ='{$linea['UNITPRD']}'>":"<td><input type='text' name='PRECIO' placeholder='0.00' size='5'></td>")."			
 			<td><button type='submit' form='mov{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
 			</form>
 					";
@@ -300,28 +305,11 @@ class mproducto extends conexion{
 		<tbody>';
 		foreach ($dataSet as $linea){
 			$dataX = array_slice($linea,1);
-			$warning = "" ;//($linea['CANTPRD']>$linea['MINPRD'])?"":"class='warning'";
+			$warning = "" ;
 			echo "<tr $warning>";
-			foreach($dataX as $celda){                    
-				echo "<td>$celda</td>";
-			}
-/*			echo "
-			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='venta{$linea['CODPRD']}'>
-			<td>
-				<input type='hidden' name='CODPROV' value='{$linea['CODPROV']}' size='5' readonly>
-				<input type='hidden' name='PRECVENT' value='{$linea['PRECVENT']}' size='5' readonly>
-				<input type='number' name='CANTIDAD' min='1' max='{$linea['CANTPRD']}' value='0' size='5'>
-			</td>
-			<td><input type='text' name='GLOSAPRD' placeholder='Descripcion' size='15'></td>
-			<td><button type='submit' form='venta{$linea['CODPRD']}' value='Submit'>".(($_GET['page']=="salida")?"-":"+")."</button></td>
-			</form>
-					";	//*/
-			echo "</tr>";
-		}            
+			foreach($dataX as $celda){echo "<td>$celda</td>";}
+			echo "</tr>";		}            
 		echo '</tbody></table>';
-		
-
-
 	}
 
 
@@ -365,14 +353,14 @@ class mproducto extends conexion{
 		if($id==0){
 			$sql = "SELECT * FROM `tlistprecio`;";
 			$DataSet = $this->conexion->Select($sql);		
-			echo "<select class='form-control' name='CODLISTPRE'>";
+			echo "<select class='form-control' name='CODLISTPRE' required>";
+				echo '<option value="" selected>Seleccionar...</option>';
 			foreach ($DataSet as $data){
-				$selected = ($data['CODLISTPRE']==$id)?'Selected':'';
 				echo "<option value='{$data['CODLISTPRE']}' >{$data['DESCLISTPRE']}</option>";
 			}            
 			echo '</select>';
 		}
-		else{			
+		else{
 			$sql = "SELECT * FROM `tlistprecio` where `CODLISTPRE`= $id ;";
 			$DataSet = $this->conexion->Select($sql)[0];
 			echo "<input type='hidden' name='CODLISTPRE' id='CODLISTPRE' value='{$DataSet['CODLISTPRE']}' >";	

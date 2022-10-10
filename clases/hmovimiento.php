@@ -104,16 +104,22 @@ class hmovimiento extends conexion{
 		return $this->conexion->Insert($sql, $arrData);
 	}
 
-	public function doListTmov($tmov,$id){    
-		$sql = "SELECT `CODOPE`,`DESCOPE` FROM `ttipoope` WHERE `TIPMOV`=$tmov;"; ///Modificar5
-		$DataSet = $this->conexion->Select($sql);
-		echo '<select class="form-control" name="ttipoope" id="ttipoope" >'; //readonly
-		echo ($id==0)?'<option value="0">Select...</option>':'';        
-		foreach ($DataSet as $data){
-			$selected = ($data['CODUNID']==$id)?'Selected':'';
-			echo "<option value='{$data['CODOPE']}' $selected >{$data['DESCOPE']}</option>";
-		}            
-		echo '</select>';
+	public function doListTmov($tmov,$id){
+		if($id==0){
+			$sql = "SELECT `CODOPE`,`DESCOPE` FROM `ttipoope` WHERE `TIPMOV`=$tmov; "; 
+			$DataSet = $this->conexion->Select($sql);
+			echo '<select class="form-control" name="ttipoope" id="ttipoope"  required>'; 
+			echo '<option value="" selected>Seleccionar...</option>';
+			foreach ($DataSet as $data){
+				echo "<option value='{$data['CODOPE']}' >{$data['DESCOPE']}</option>";
+			}            
+			echo '</select>';
+		}else{
+			$sql = "SELECT `CODOPE`,`DESCOPE` FROM `ttipoope` WHERE `CODOPE`= $id; "; 
+			$DataSet = $this->conexion->Select($sql)[0];
+			echo "<input type='hidden' name='ttipoope' id='ttipoope' value='{$DataSet['CODOPE']}' >";	
+			echo "<input type='text' class='form-control' value='{$DataSet['DESCOPE']}' readonly >";
+		}
 	}
    
 	public function Venta ($DESCCLIENT,$CODLISTPRE){

@@ -1,4 +1,6 @@
 <?php
+define("HEAD","Cabecer");
+define("BODY","Cuerpo");
 define("MODULO","ingreso");
 $objProd = new mproducto();
 $objHmob;
@@ -8,38 +10,37 @@ if(!empty($_POST)){
 	if(!empty($_GET['act']))
 		if($_GET['act']=="add"){
 			if(empty($_SESSION[MODULO])){$_SESSION[MODULO]=array();}
-			$_SESSION[MODULO][$_GET['CODPRD']]=array('CANTIDAD'=> $_POST['CANTIDAD'],'PRECIO'=>$_POST['PRECIO']);
+			$_SESSION[MODULO][BODY][$_GET['CODPRD']]=array(
+				'CANTIDAD'=> $_POST['CANTIDAD'],
+				'PRECIO'=>$_POST['PRECIO']);
 		}elseif($_GET['act']=="submit"){
 			echo '<pre>';
 			$objHmob = new hmovimiento();			
 			$IDIngreso = $objHmob->Ingreso($_POST['DESCGLOS'],$_POST['ttipoope']);
-			//$IDIngreso = $objHmob->Ingreso('Descripcion Glosa',1);
-			//echo "<br>Id ingreso $IDIngreso <br>";
 			
 			$objBmob = new bmovimiento();
-			foreach($_SESSION[MODULO] as $IdProd=>$Detalles ){
+			foreach($_SESSION[MODULO][BODY] as $IdProd=>$Detalles ){
 				$post=array();
 				$post['IDMOV']= $IDIngreso ;
 				$post['CODPRD']= $IdProd ;
 				$post['GLOSAPRD']= '' ;
 				$post['CANTPRD']= $Detalles['CANTIDAD'] ;
 				$post['UNITPRD']= $Detalles['PRECIO'] ;
-				$post['TOTUNIT']= $Detalles['PRECIO']*$Detalles['CANTIDAD'] ;				
-				//if($_POST['ttipoope']==1)	$post['OP']= 1 ;
+				$post['TOTUNIT']= $Detalles['PRECIO']*$Detalles['CANTIDAD'] ;	
 				$IDDetIngreso = $objBmob->Ingreso($post);
-				//print_r($IDDetIngreso);
 			}	
 			echo '</pre>';		
 			$_SESSION[MODULO]=array();
-
-			//*/
 		}elseif($_GET['act']=="del"){
-			unset($_SESSION[MODULO][$_GET['CODPRD']]);
+			unset($_SESSION[MODULO][BODY][$_GET['CODPRD']]);
+		}elseif ($_GET['act']==HEAD) {			
+			$_SESSION[MODULO][HEAD]=array(
+				'DESCGLOS'=> $_POST['DESCGLOS'],
+				'ttipoope'=> $_POST['ttipoope']);
 		}
 		
 }
-
-if(!empty($_SESSION[MODULO])){ ?>
+?>
 
 	<div class="row">
 		<div class="col-md-6">
@@ -56,16 +57,26 @@ if(!empty($_SESSION[MODULO])){ ?>
 
 					<?php 		
 					$objHmob = new hmovimiento();					
-					$objHmob->doListTmov(1,1);  
+					$idTiOp=(empty($_SESSION[MODULO][HEAD]))?0:$_SESSION[MODULO][HEAD]['ttipoope'];										
+					$objHmob->doListTmov(1,$idTiOp);  
 					?>
 
 				</div>
 			</div>			
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-4">
-				<button type="submit" class="btn btn-default">Ingresar</button>
+			<div class="form-group">				
+				<div class="col-sm-offset-1 col-sm-2">
+						<?php echo '<button type="submit" class="btn '.(empty($_SESSION[MODULO][HEAD])?'btn-success':'btn-default').'" formaction="?page='.MODULO.'&act='.HEAD.'">'.(empty($_SESSION[MODULO][HEAD])?'Iniciar':'Actualizar').'</button>'; ?>
+					</div>
+
+					<?php	if(!empty($_SESSION[MODULO][HEAD])){	?>
+					<div class="col-sm-offset-1 col-sm-2">
+						<button type="submit" class="btn btn-secondary" formaction="?page=venta&act=new">Nuevo</button>
+					</div>
+					<div class="col-sm-offset-1 col-sm-2">
+						<button type="submit" class="btn btn-success">Finalizar</button>
+					</div>
+					<?php	} ?>
 				</div>
-			</div>
 			</form>
 		</div>
 		<div class="col-md-6">
@@ -82,7 +93,8 @@ if(!empty($_SESSION[MODULO])){ ?>
 			</thead>
 			<tbody>
 				<?php
-					foreach ($_SESSION[MODULO] as $key => $value) {
+					if(!empty($_SESSION[MODULO][BODY]))
+					foreach ($_SESSION[MODULO][BODY] as $key => $value) {
 						
 						echo "<tr>
 						<form action='?page=".MODULO."&act=del&CODPRD={$key}' method='post' id='igreso{$key}'>
@@ -100,6 +112,18 @@ if(!empty($_SESSION[MODULO])){ ?>
 			</table>
 		</div>
 	</div>
-<?php
-}
- $objProd->doTableMOV(MODULO,1); ?>
+	<div class="row">
+		<div class="col-md-6">
+			<form action="?page=venta" method="get">
+				<input type="hidden" id="page" name="page" value="<?php echo MODULO;?>">
+				<label for="fname">Buscar:</label><input type="text" id="buscar" name="buscar">	<input type="submit" value="Buscar">
+			</form>
+		</div>
+		<div class="col-md-12">
+			<?php
+			if(!empty($_SESSION[MODULO][HEAD])){
+				$buscar = (empty($_GET['buscar']))?"":$_GET['buscar'];
+				$objProd->doTableMOV(MODULO,1,$buscar); 
+			}	?>
+		</div>
+	</div>
