@@ -70,40 +70,40 @@ if(!empty($_POST)){
 	<div class="row">
 		<div class="col-md-4">
 			<form class="form-horizontal" action="?page=venta&act=submit" method="post">
-			<div class="form-group">
-				<label for="DESCCLIENT" class="col-sm-2 control-label">Cliente</label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" name="DESCCLIENT" id="DESCCLIENT" placeholder="Nombre Apellido" value="<?php echo (empty($_SESSION[CLIENTE]))?"":$_SESSION[CLIENTE]['DESCCLIENT']; ?>">
+				<div class="form-group">
+					<label for="DESCCLIENT" class="col-sm-2 control-label">Cliente</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" name="DESCCLIENT" id="DESCCLIENT" placeholder="Nombre Apellido" value="<?php echo (empty($_SESSION[CLIENTE]))?"":$_SESSION[CLIENTE]['DESCCLIENT']; ?>">
+					</div>
 				</div>
-			</div>
-			<div class="form-group">
-				<label for="CODLISTPRE" class="col-sm-2 control-label">Lista de precio</label>
-				<div class="col-sm-10">
+				<div class="form-group">
+					<label for="CODLISTPRE" class="col-sm-2 control-label">Lista de precio</label>
+					<div class="col-sm-10">
 
-					<?php
-						$idPrLst=(empty($_SESSION['cliente']['CODLISTPRE']))?0:$_SESSION['cliente']['CODLISTPRE'];
-						$objProd->doListPrecio($idPrLst); 
-					?>
+						<?php
+							$idPrLst=(empty($_SESSION['cliente']['CODLISTPRE']))?0:$_SESSION['cliente']['CODLISTPRE'];
+							$objProd->doListPrecio($idPrLst); 
+						?>
 
+					</div>
+				</div>			
+				<div class="form-group">
+					<div class="col-sm-offset-1 col-sm-2">
+						<?php
+							echo '<button type="submit" class="btn '.(empty($_SESSION[CLIENTE])?'btn-success':'btn-default').'" formaction="?page=venta&act=cli">'.(empty($_SESSION[CLIENTE])?'Iniciar':'Actualizar').'</button>';
+							//else { echo '<button type="submit" class="btn btn-default">Lleno</button>';}					
+						?>
+					</div>
+					<?php	if(!empty($_SESSION[CLIENTE])){	?>
+					<div class="col-sm-offset-1 col-sm-2">
+						<button type="submit" class="btn btn-secondary" formaction="?page=venta&act=new">Nuevo</button>
+					</div>
+					<div class="col-sm-offset-1 col-sm-2">
+						<button type="submit" class="btn btn-success">VENDER</button>
+					</div>
+					<?php	} ?>
 				</div>
-			</div>			
-			<div class="form-group">
-				<div class="col-sm-offset-1 col-sm-2">
-					<?php
-						echo '<button type="submit" class="btn '.(empty($_SESSION[CLIENTE])?'btn-success':'btn-default').'" formaction="?page=venta&act=cli">'.(empty($_SESSION[CLIENTE])?'Iniciar':'Actualizar').'</button>';
-						//else { echo '<button type="submit" class="btn btn-default">Lleno</button>';}					
-					?>
-				</div>
-				<?php	if(!empty($_SESSION[CLIENTE])){	?>
-				<div class="col-sm-offset-1 col-sm-2">
-					<button type="submit" class="btn btn-secondary" formaction="?page=venta&act=new">Nuevo</button>
-				</div>
-				<div class="col-sm-offset-1 col-sm-2">
-					<button type="submit" class="btn btn-success">VENDER</button>
-				</div>
-				<?php	} ?>
-			</div>
-				</form>
+			</form>
 		</div>
 		<div class="col-md-8">
 			

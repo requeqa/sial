@@ -61,6 +61,16 @@ class mproducto extends conexion{
 		if($resUpdate == 1)return "--ID: {$post['CODPRD']} Actualizado--";
 		else return print_r($resUpdate);
 	}
+	public function SetPrice($post){
+		foreach ($post as $key => $value) {
+			$sql = "UPDATE `dlistprecio` SET `PRECVENT` = ? WHERE `dlistprecio`.`DETPRECIO` = ?; ";
+			$arrData = array($value,$key);
+			$resUpdate = $this->conexion->Update($sql, $arrData);					
+		}
+		return "Precio Actualizado";
+
+	}
+
 	public function getProductos(){
 		$sql ="SELECT * from vw_productos order by 2"; ///Modificar4
 		return $this->conexion->Select($sql); 
@@ -71,6 +81,10 @@ class mproducto extends conexion{
 	}
 	public function getInv(int $ID){ //Llamada para cargar formulario
 		$sql ="SELECT * from mproducto Where CODPRD = $ID"; ///Modificar5
+		return $this->conexion->Select($sql); 
+	}
+	public function getPrecio(int $id){
+		$sql = "SELECT d.DETPRECIO, t.DESCLISTPRE, d.PRECVENT FROM `dlistprecio` d inner JOIN tlistprecio t on t.CODLISTPRE=d.CODLISTPRE WHERE CODPRD= $id ; ";		
 		return $this->conexion->Select($sql); 
 	}
 
@@ -117,6 +131,10 @@ class mproducto extends conexion{
 			<th>STOCK</th>
 			<th>UNITARIO</th>
 			<th>TOTAL</th>
+			<th>C/F</th>
+			<th>S/F</th>
+			<th>Esp C/F</th>
+			<th>Esp S/F</th>
 			<th>Editar</th>
 		</tr>
 		</thead>
