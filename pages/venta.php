@@ -61,25 +61,27 @@ if(!empty($_POST)){
 			unset($_SESSION[CLIENTE]);
 		}		
 } 
-echo	"<div id='recibo' hidden > 
-<table id='muestra' class='tabla'>
-<tr><th>Nro: </th><td>{$_SESSION['Recibo']['VENTA']}</td><th>Fecha: </th><td colspan='3'>{$_SESSION['Recibo']['FECHA']}</td></tr>
-<tr><th>Cliente</th><td colspan='4'>{$_SESSION['Recibo']['CLIENTE']}</td></tr>
-<tr><th>Detalle</th></tr>
-<tr><th>Producto</th>
-<th>Glosario</th>
-<th>Unidades</th>
-<th>Unitario</th>
-<th>Total</th></tr>";
-$Tot=0;
-foreach ($_SESSION['Recibo']["DETALLE"] as $linea) {
-	echo "<tr>";
-	foreach ($linea as $campo) {echo "<td> $campo </td>";}
-	echo "</tr>";
-	$Tot+=$linea["TOTUNIT"];
+if(!empty($_SESSION['Recibo'])){
+	echo	"<div id='recibo' hidden > 
+	<table id='muestra' class='tabla'>
+	<tr><th>Nro: </th><td>{$_SESSION['Recibo']['VENTA']}</td><th>Fecha: </th><td colspan='3'>{$_SESSION['Recibo']['FECHA']}</td></tr>
+	<tr><th>Cliente</th><td colspan='4'>{$_SESSION['Recibo']['CLIENTE']}</td></tr>
+	<tr><th>Detalle</th></tr>
+	<tr><th>Producto</th>
+	<th>Glosario</th>
+	<th>Unidades</th>
+	<th>Unitario</th>
+	<th>Total</th></tr>";
+	$Tot=0;
+	foreach ($_SESSION['Recibo']["DETALLE"] as $linea) {
+		echo "<tr>";
+		foreach ($linea as $campo) {echo "<td> $campo </td>";}
+		echo "</tr>";
+		$Tot+=$linea["TOTUNIT"];
+	}
+	echo "<tr><td colspan='3'></td><th>Total:</th><th>{$Tot}</th></tr>
+	</table></div>";
 }
-echo "<tr><td colspan='3'></td><th>Total:</th><th>{$Tot}</th></tr>
-</table></div>";
 ?>
 
 
