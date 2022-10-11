@@ -6,9 +6,9 @@ if(!empty($_GET["page"]))
             require_once 'pages/producto.php';
             break;
         
-        case 'productos':
-            echo '<h1 class="page-header">Ingreso</h1>';
-            require_once 'DEMOS/test.php';
+        case 'kardex':
+            echo '<h1 class="page-header">Cardex Producto</h1>';
+            require_once 'pages/kardex.php';
             break;
         
         case 'ingreso':

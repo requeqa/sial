@@ -310,6 +310,30 @@ class mproducto extends conexion{
 			echo "</tr>";		}            
 		echo '</tbody></table>';
 	}
+	function Kardex($id){
+		$sql = "SELECT cast(hm.`FECHA` as date) as FECHA, hm.IDVENTA, bm.CANTPRD, IF(hm.`TIPMOV` = 1, bm.TOTUNIT,0) AS INGRESO, IF(hm.`TIPMOV` = 2, bm.TOTUNIT,0) AS SALIDA 
+		FROM hmovimiento hm INNER JOIN bmovimiento bm ON hm.IDMOV = bm.IDMOV Where CODPRD = $id ORDER BY hm.IDMOV";
+		$dataSet = $this->conexion->Select($sql);
+		
+		echo '<table class="table table-striped table-responsive">
+		<thead>
+		  <tr>
+			<th>Fecha</th>
+			<th>Venta</th>
+			<th>Cantidad</th>
+			<th>Ingreso</th>
+			<th>Salida</th>			
+		  </tr>
+		</thead>
+		<tbody>';
+		foreach ($dataSet as $linea){
+	//		$dataX = array_slice($linea,1);
+			$warning = "" ;
+			echo "<tr $warning>";
+			foreach($linea as $celda){echo "<td>$celda</td>";}
+			echo "</tr>";		}            
+		echo '</tbody></table>';
+	}
 
 
 // Controles de Formulario
