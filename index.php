@@ -81,11 +81,11 @@ require_once("autoload.php");
           </ul>
           <ul class="nav nav-sidebar">
             <li <?php echo ($page=="producto")?"class=\"active\"":""; ?> ><a href="?page=producto">Nuevo Producto</a></li>
-            <li <?php echo ($page=="kardex")?"class=\"active\"":""; ?> ><a href="?page=kardex">Productos</a></li>
+            <li <?php echo ($page=="kardex")?"class=\"active\"":""; ?> ><a href="?page=kardex">Kardex Productos</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li <?php echo ($page=="venta")?"class=\"active\"":""; ?> ><a href="?page=venta">Venta</a></li>
-            <li <?php echo ($page=="off")?"class=\"active\"":""; ?> ><a href="?page=ventaOff&act=off">Vaciar Venta</a></li>
+           <!-- <li <?php echo ($page=="off")?"class=\"active\"":""; ?> ><a href="?page=ventaOff&act=off">Vaciar Venta</a></li> -->
           </ul>
           <ul class="nav nav-sidebar">
             <li <?php echo ($page=="movimientos")?"class=\"active\"":""; ?> ><a href="?page=movimientos">Movimiento</a></li>
