@@ -1,5 +1,5 @@
 <?php
-define("HEAD","Cabecer");
+define("HEAD","Cabecera");
 define("BODY","Cuerpo");
 define("MODULO","salida");	//echo MODULO;
 $objProd = new mproducto();
@@ -37,6 +37,8 @@ if(!empty($_POST)){
 			$_SESSION[MODULO][HEAD]=array(
 				'DESCGLOS'=> $_POST['DESCGLOS'],
 				'ttipoope'=> $_POST['ttipoope']);
+		}elseif ($_GET['act']=="new") {			
+			unset($_SESSION[MODULO]);
 		}
 		
 }?>
@@ -71,7 +73,7 @@ if(!empty($_POST)){
 
 				<?php	if(!empty($_SESSION[MODULO][HEAD])){	?>
 				<div class="col-sm-offset-1 col-sm-2">
-					<button type="submit" class="btn btn-secondary" formaction="?page=venta&act=new">Nuevo</button>
+					<button type="submit" class="btn btn-secondary" formaction="?page=salida&act=new">Nuevo</button>
 				</div>
 				<div class="col-sm-offset-1 col-sm-2">
 					<button type="submit" class="btn btn-success">Finalizar</button>

@@ -1,5 +1,5 @@
 <?php
-define("HEAD","Cabecer");
+define("HEAD","Cabecera");
 define("BODY","Cuerpo");
 define("MODULO","ingreso");
 $objProd = new mproducto();
@@ -37,40 +37,40 @@ if(!empty($_POST)){
 			$_SESSION[MODULO][HEAD]=array(
 				'DESCGLOS'=> $_POST['DESCGLOS'],
 				'ttipoope'=> $_POST['ttipoope']);
+		}elseif ($_GET['act']=="new") {			
+			unset($_SESSION[MODULO]);
 		}
 		
 }
 ?>
-
-	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-4">
 			<form class="form-horizontal" action="?page=ingreso&act=submit" method="post">
-			<div class="form-group">
-				<label for="DESCGLOS" class="col-sm-2 control-label">Glosa</label>
-				<div class="col-sm-4">
-					<input type="text" class="form-control" name="DESCGLOS" id="DESCGLOS" placeholder="Glosa" value="">
+				<div class="form-group">
+					<label for="DESCGLOS" class="col-sm-2 control-label">Glosa</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" name="DESCGLOS" id="DESCGLOS" placeholder="Glosa" value="">
+					</div>
 				</div>
-			</div>
-			<div class="form-group">
-				<label for="ttipoope" class="col-sm-2 control-label">Tipo Ingreso</label>
-				<div class="col-sm-4">
+				<div class="form-group">
+					<label for="ttipoope" class="col-sm-2 control-label">Tipo Ingreso</label>
+					<div class="col-sm-8">
 
-					<?php 		
-					$objHmob = new hmovimiento();					
-					$idTiOp=(empty($_SESSION[MODULO][HEAD]))?0:$_SESSION[MODULO][HEAD]['ttipoope'];										
-					$objHmob->doListTmov(1,$idTiOp);  
-					?>
+						<?php 		
+						$objHmob = new hmovimiento();					
+						$idTiOp=(empty($_SESSION[MODULO][HEAD]))?0:$_SESSION[MODULO][HEAD]['ttipoope'];										
+						$objHmob->doListTmov(1,$idTiOp);  
+						?>
 
-				</div>
-			</div>			
-			<div class="form-group">				
-				<div class="col-sm-offset-1 col-sm-2">
+					</div>
+				</div>			
+				<div class="form-group">				
+					<div class="col-sm-offset-1 col-sm-2">
 						<?php echo '<button type="submit" class="btn '.(empty($_SESSION[MODULO][HEAD])?'btn-success':'btn-default').'" formaction="?page='.MODULO.'&act='.HEAD.'">'.(empty($_SESSION[MODULO][HEAD])?'Iniciar':'Actualizar').'</button>'; ?>
 					</div>
 
 					<?php	if(!empty($_SESSION[MODULO][HEAD])){	?>
 					<div class="col-sm-offset-1 col-sm-2">
-						<button type="submit" class="btn btn-secondary" formaction="?page=venta&act=new">Nuevo</button>
+						<button type="submit" class="btn btn-secondary" formaction="?page=ingreso&act=new">Nuevo</button>
 					</div>
 					<div class="col-sm-offset-1 col-sm-2">
 						<button type="submit" class="btn btn-success">Finalizar</button>
@@ -79,41 +79,38 @@ if(!empty($_POST)){
 				</div>
 			</form>
 		</div>
-		<div class="col-md-6">
-			
+		<div class="col-md-8">
 			<table class="table table-striped table-responsive">
-			<thead>
-				<tr>
-					<th>Id</th>
-					<th>Nombre</th>
-					<th>Cantidad</th>
-					<th>Precio<br>Unitario</th>
-					<th>Borrar</th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php
-					if(!empty($_SESSION[MODULO][BODY]))
-					foreach ($_SESSION[MODULO][BODY] as $key => $value) {
-						
-						echo "<tr>
-						<form action='?page=".MODULO."&act=del&CODPRD={$key}' method='post' id='igreso{$key}'>
-						
-							<td><input type='hidden' id='CANTIDAD' name='CANTIDAD' value='$key'>$key</td>
-							<td> Nombre X </td>
-							<td>{$value['CANTIDAD']}</td>
-							<td>{$value['PRECIO']}</td>
-							<td><button type='submit' form='igreso{$key}' value='Submit'>-</button></td>
-						</form>
-						</tr>";
-					}
-				?>
-			</tbody>
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Nombre</th>
+						<th>Cantidad</th>
+						<th>Precio<br>Unitario</th>
+						<th>Borrar</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+						if(!empty($_SESSION[MODULO][BODY]))
+						foreach ($_SESSION[MODULO][BODY] as $key => $value) {
+							
+							echo "<tr>
+							<form action='?page=".MODULO."&act=del&CODPRD={$key}' method='post' id='igreso{$key}'>
+							
+								<td><input type='hidden' id='CANTIDAD' name='CANTIDAD' value='$key'>$key</td>
+								<td> Nombre X </td>
+								<td>{$value['CANTIDAD']}</td>
+								<td>{$value['PRECIO']}</td>
+								<td><button type='submit' form='igreso{$key}' value='Submit'>-</button></td>
+							</form>
+							</tr>";
+						}
+					?>
+				</tbody>
 			</table>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-7">
 			<form action="?page=venta" method="get">
 				<input type="hidden" id="page" name="page" value="<?php echo MODULO;?>">
 				<label for="fname">Buscar:</label><input type="text" id="buscar" name="buscar">	<input type="submit" value="Buscar">
@@ -126,4 +123,3 @@ if(!empty($_POST)){
 				$objProd->doTableMOV(MODULO,1,$buscar); 
 			}	?>
 		</div>
-	</div>

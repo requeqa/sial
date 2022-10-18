@@ -54,28 +54,40 @@ if(!empty($_POST)){
 			</tr><tr>
 				<td>VIGENCIA: </td>
 				<td><?php $mi_clase->doListVigencia((!empty($producto))? $producto["VIGENCIA"] :'1'); ?></td>
-			</tr><tr><td></td><td><input type="submit" value="<?php echo (!empty($_GET['CODPRD']))? 'Actualizar':'Nuevo';?>" ></td></tr>
+			</tr><tr><td></td><td>
+			<button type="button" class="btn btn-primary"><?php echo (!empty($_GET['CODPRD']))? 'Actualizar Producto':'Guardar Nuevo Producto';?></button>			
 			</table>
 		</form>
 	</div>
 	<div class="col-md-4">
 		<form class="form-horizontal" action="?page=producto&act=price" method="post" >
 			<?php	
+			if($IDProd!=0){
+				echo 
+				'<div class="form-group">
+					<div class="col-sm-9">
+						<h3>Lista de Precios</h3>
+					</div>
+				</div>';	
+
 				$dataSet= $mi_clase->getPrecio($IDProd);	
-			foreach ($dataSet as $value) {
-				echo '<div class="form-group">
-						<label for="PRECIO" class="col-sm-3 control-label">'.$value['DESCLISTPRE'].'</label>	
-						<div class="col-sm-9">
-							<input type="text" class="form-control" name="PRECIO['.$value['DETPRECIO'].']" placeholder="'.$value['PRECVENT'].'" value="'.$value['PRECVENT'].'" '.(($IDProd==0)?"disabled":"").' >
-						</div>
-					</div>';
-			} ?>
+				foreach ($dataSet as $value) {
+					echo '<div class="form-group">
+							<label for="PRECIO" class="col-sm-3 control-label">'.$value['DESCLISTPRE'].'</label>	
+							<div class="col-sm-9">
+								<input type="text" class="form-control" name="PRECIO['.$value['DETPRECIO'].']" placeholder="'.$value['PRECVENT'].'" value="'.$value['PRECVENT'].'" '.(($IDProd==0)?"disabled":"").' >
+							</div>
+						</div>';
+				}
+
+				?>
 	
 			<div class="form-group">					
 				<div class="col-sm-offset-1 col-sm-2">
-					<button type="submit" class="btn btn-primary" <?php echo ($IDProd==0)?"disabled":"";?>>Guardar</button>
+					<button type="submit" class="btn btn-primary" <?php echo ($IDProd==0)?"disabled":"";?>>Guardar Precios</button>
 				</div>
 			</div>
+			<?php } ?>
 		</form>
 	</div>
 </div>

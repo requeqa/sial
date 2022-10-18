@@ -2,8 +2,12 @@
 if(!empty($_GET["page"]))
     switch ($_GET["page"]) {
         case 'producto':
-            echo '<h1 class="page-header">Producto</h1>';
+            echo '<h1 class="page-header">Maestro de Producto</h1>';
             require_once 'pages/producto.php';
+            break;
+        case 'sesion':
+            echo '<h1 class="page-header">Iniciar como admin</h1>';
+            require_once 'pages/sesion.php';
             break;
         
         case 'kardex':
