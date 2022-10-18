@@ -62,7 +62,7 @@ if(!empty($_POST)){
 	<div class="col-md-4">
 		<form class="form-horizontal" action="?page=producto&act=price" method="post" >
 			<?php	
-			if($IDProd!=0){
+			if($IDProd!=0 && (!empty($_SESSION[USUARIO]))){
 				echo 
 				'<div class="form-group">
 					<div class="col-sm-9">
@@ -99,6 +99,7 @@ print_r ($_POST);
 print_r ($_GET);
 echo '</pre>';
 // */
-$mi_clase->doTableProd(); 
+$show=(!empty($_SESSION[USUARIO]))?1:0;
+$mi_clase->doTableProd($show); 
 
 ?>

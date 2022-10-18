@@ -108,7 +108,7 @@ class mproducto extends conexion{
 		echo "<input type=\"submit\"></form>";
 	}
 
-	function doTableProd(){     //Tabla de productos
+	function doTableProd($isSession){     //Tabla de productos
 		$sql = SELF::VISTAPRD;
 		$DataSet = $this->conexion->Select(SELF::VISTAPRD); 
 		echo '<table class="table table-striped">
@@ -123,8 +123,8 @@ class mproducto extends conexion{
 			<th>U.MEDIDA</th>
 			<th>MARCA</th>
 			<th>STOCK</th>
-			<th>UNITARIO</th>
-			<th>TOTAL</th>
+			'.(($isSession==1)?'<th>UNITARIO</th>
+			<th>TOTAL</th>':"").'			
 			<th>C/F</th>
 			<th>S/F</th>
 			<th>Esp C/F</th>
@@ -135,7 +135,12 @@ class mproducto extends conexion{
 		<tbody>';             
 		foreach ($DataSet as $linea){
 			echo "<tr>";
-			foreach($linea as $celda){                    
+			foreach($linea as $Key => $celda){
+				if(($isSession==0)){
+					if(!($Key == 'UNITPRD' || $Key == 'TOTUNIT'))
+					echo "<td>$celda</td>";                   
+					
+				}else
 				echo "<td>$celda</td>";
 			}
 			echo "<td><a href='?page=producto&act=edit&CODPRD={$linea['CODPRD']}'>editar</a></td>";   

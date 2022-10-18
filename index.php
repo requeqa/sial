@@ -73,7 +73,7 @@ require_once("autoload.php");
 				//	<li><a href="#">Settings</a></li>
 				?>
 			<li><a href="?page=sesion&act=options">Opciones</a></li>
-			<li><a href="?page=sesion&act=out">Salir</a></li>
+			<li><a href="?page=<?php echo $_GET['page']; ?>&act=out">Salir</a></li>
 		  	<?php
 			}
 			?>
