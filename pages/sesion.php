@@ -8,7 +8,7 @@ function execPrint($command) {
     }
     print("</pre>");
 }
-
+echo "<h1> ARDILLA </h1>"
 
 
 if(!empty($_GET["act"]))
