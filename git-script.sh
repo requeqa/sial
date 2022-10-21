@@ -1,0 +1,1 @@
+cd C:/xampp/htdocs/sial  && git pull origin master

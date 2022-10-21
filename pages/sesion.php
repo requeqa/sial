@@ -1,4 +1,35 @@
 <?php
+function execPrint($command) {
+    $result = array();
+    exec($command, $result);
+    print("<pre>");
+    foreach ($result as $line) {
+        print($line . "\n");
+    }
+    print("</pre>");
+}
+
+
+
+if(!empty($_GET["act"]))
+if($_GET["act"]="git"){
+	//echo "XXX";
+	// Print the exec output inside of a pre element
+	//execPrint("git pull https://user:password@bitbucket.org/user/repo.git master");
+	//	execPrint("git pull");
+	//	execPrint("git status");
+
+
+	// directorio actual
+	echo getcwd() . "\n";
+	$output = shell_exec('git-script.sh');
+	print_r ($output);
+	echo "\n OK";
+	//chdir('public_html');
+
+	// directorio actual
+	//echo getcwd() . "\n";
+	}
 
 	?>
 	<div class="col-md-4">
@@ -26,6 +57,12 @@
 				echo'<button type="submit" class="btn btn-danger" formaction="?page=sesion&act=out">SALIR</button>';
 			}
 			?>
+
 			</div>
 		</form>
 	</div>
+<?php	if(!empty($_SESSION[USUARIO])){	?>
+	<form action="?page=sesion&act=git" method="post">
+		<Button type="submit"class="btn-secundary" >Actualizar</Button>
+	</form>
+<?php }?>
