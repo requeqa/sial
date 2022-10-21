@@ -13,6 +13,7 @@ if(!empty($_POST)){
 			if(empty($_SESSION[MODULO])){$_SESSION[MODULO]=array();}
 			$_SESSION[MODULO][$_GET['CODPRD']]=array(
 				'CODPROV'	=>	$_POST['CODPROV'],
+				'NOMPROD'	=>	$_POST['NOMPROD'],
 				'GLOSAPRD'	=>	$_POST['GLOSAPRD'],
 				'CANTIDAD'	=>	$_POST['CANTIDAD'],
 				'PRECIO'	=>	$_POST['PRECVENT']);
@@ -35,6 +36,7 @@ if(!empty($_POST)){
 				$post['IDMOV']= $IDSalida ;
 				$post['IDDETVENTA']=$idDetVenta;
 				$post['CODPRD']= $IdProd ;
+				$post['NOMPROD']= $Detalles['NOMPROD'] ;
 				$post['GLOSAPRD']= $Detalles['GLOSAPRD'] ;
 				$post['CANTPRD']= $Detalles['CANTIDAD'] ;
 				$post['UNITPRD']= $Detalles['PRECIO'] ;
@@ -64,13 +66,14 @@ if(!empty($_POST)){
 if(!empty($_SESSION['Recibo'])){
 	echo	"<div id='recibo' hidden > 
 	<table id='muestra' class='tabla'>
-	<tr><th>Nro: </th><td>{$_SESSION['Recibo']['VENTA']}</td><th>Fecha: </th><td colspan='3'>{$_SESSION['Recibo']['FECHA']}</td></tr>
-	<tr><th>Cliente</th><td colspan='4'>{$_SESSION['Recibo']['CLIENTE']}</td></tr>
-	<tr><th>Detalle</th></tr>
+	<tr><th colspan='2'>Nro: </th><td>{$_SESSION['Recibo']['VENTA']}</td><th>Fecha: </th><td colspan='3'>{$_SESSION['Recibo']['FECHA']}</td></tr>
+	<tr><th colspan='2'Cliente</th><td colspan='4'>{$_SESSION['Recibo']['CLIENTE']}</td></tr>
+	<tr><th colspan='2'>Detalle</th></tr>
 	<tr><th>Producto</th>
-	<th>Glosario</th>
+	<th>Nombre</th>
+	<th>Glosa</th>
 	<th>Unidades</th>
-	<th>Unitario</th>
+	<th>Precio/U</th>
 	<th>Total</th></tr>";
 	$Tot=0;
 	foreach ($_SESSION['Recibo']["DETALLE"] as $linea) {
@@ -151,6 +154,7 @@ if(!empty($_SESSION['Recibo'])){
 			<thead>
 				<tr>
 					<th>Id</th>
+					<th>Cod</th>
 					<th>Nombre</th>
 					<th>Glosa</th>
 					<th>Cantidad</th>
@@ -164,8 +168,9 @@ if(!empty($_SESSION['Recibo'])){
 					foreach ($_SESSION[MODULO] as $key => $value) {						
 						echo "<tr>
 						<form action='?page=".MODULO."&act=del&CODPRD={$key}' method='post' id='carrito{$key}'>						
-							<td><input type='hidden' id='CANTIDAD' name='CANTIDAD' value='$key'></td>
+							<td><input type='hidden' id='CANTIDAD' name='CANTIDAD' value='$key'> $key </td>
 							<td>{$value['CODPROV']}</td>
+							<td>{$value['NOMPROD']}</td>
 							<td>{$value['GLOSAPRD']}</td>
 							<td>{$value['CANTIDAD']}</td>
 							<td>{$value['PRECIO']}</td>

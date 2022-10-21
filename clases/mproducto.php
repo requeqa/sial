@@ -269,8 +269,9 @@ class mproducto extends conexion{
 			}
 			echo "
 			<form action='?page={$page}&act=add&CODPRD={$linea['CODPRD']}' method='post' id='venta{$linea['CODPRD']}'>
-			<td>
+			<td>			
 				<input type='hidden' name='CODPROV' value='{$linea['CODPROV']}' size='5' readonly>
+				<input type='hidden' name='NOMPROD' value='{$linea['NOMPROD']}' size='5' readonly>
 				<input type='hidden' name='PRECVENT' value='{$linea['PRECVENT']}' size='5' readonly>
 				<input type='number' name='CANTIDAD' min='1' max='{$linea['CANTPRD']}' value='0' size='5'>
 			</td>

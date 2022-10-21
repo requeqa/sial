@@ -1,10 +1,12 @@
 <?php
 define("USUARIO","Usuario");
+define("PASS","s14ls1t0");
+
 if ( ! session_id() ) @ session_start();
 if(!empty($_GET['act']))
 	if($_GET['act']=="login"){
 		if(!empty($_POST))
-			if($_POST['CLAVE']=="sialsito")			
+			if($_POST['CLAVE']==PASS)			
 				$_SESSION[USUARIO]=$_POST['NOMBRE'];
 	}elseif($_GET['act']=="out"){
 		unset($_SESSION[USUARIO]);

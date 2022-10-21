@@ -13,7 +13,7 @@
 			<div class="form-group">
 				<label for="CLAVE" class="col-sm-2 control-label">Usuario</label>
 				<div class="col-sm-4">
-					<input type="password" class="form-control" name="CLAVE" id="CLAVE" value="sialsito">
+					<input type="password" class="form-control" name="CLAVE" id="CLAVE" value="<?php echo PASS; ?>" >
 				</div>
 			</div>
 			
