@@ -24,7 +24,7 @@ if(!empty($_POST)){
 
 <div class="row">
 	<div class="col-md-4">
-		<form action="?page=producto&act=<?php echo (!empty($_GET['CODPRD']))? 'edit':'new';?>" method="post">
+		<form action="?page=producto&act=<?php echo (empty($_GET['CODPRD']))? 'new':'edit';?>" method="post">
 			<table>
 			<tr>
 				<td>COD PRODUCTO:</td>
@@ -55,7 +55,7 @@ if(!empty($_POST)){
 				<td>VIGENCIA: </td>
 				<td><?php $mi_clase->doListVigencia((!empty($producto))? $producto["VIGENCIA"] :'1'); ?></td>
 			</tr><tr><td></td><td>
-			<button type="button" class="btn btn-primary"><?php echo (!empty($_GET['CODPRD']))? 'Actualizar Producto':'Guardar Nuevo Producto';?></button>			
+			<button type="submit" class="btn btn-primary"><?php echo (!empty($_GET['CODPRD']))? 'Actualizar Producto':'Guardar Nuevo Producto';?></button>			
 			</table>
 		</form>
 	</div>
