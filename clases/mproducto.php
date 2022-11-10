@@ -15,9 +15,7 @@ class mproducto extends conexion{
 
 	//  --  Columnas  --
 	private $conexion;
-	private const VISTAPRD = "SELECT * from vw_productos order by 2 ";
-
-
+	private const VISTAPRD = "SELECT * from vw_productos order by 1 ";
 
 	public function __construct(){
 		$this->conexion = new conexion();    
@@ -130,6 +128,7 @@ class mproducto extends conexion{
 			<th>Esp C/F</th>
 			<th>Esp S/F</th>
 			<th>Editar</th>
+			<th>Kardex</th>
 		</tr>
 		</thead>
 		<tbody>';             
@@ -143,8 +142,9 @@ class mproducto extends conexion{
 				}else
 				echo "<td>$celda</td>";
 			}
-			echo "<td><a href='?page=producto&act=edit&CODPRD={$linea['CODPRD']}'>editar</a></td>";   
-			echo "</td></tr>";
+			echo "<td><a href='?page=producto&act=edit&CODPRD={$linea['CODPRD']}'>editar</a></td>";  
+			echo "<td><a href='?page=kardex&buscar={$linea['CODPRD']}'>kardex</a></td>";   
+			echo "</tr>";
 		}            
 		echo '</tbody></table>';
 	}	
@@ -283,9 +283,11 @@ class mproducto extends conexion{
 		}            
 		echo '</tbody></table>';
 	}
-	function doMov(){
+	function doMov($isSession,$idate,$fdate){
+		$ispost=($idate<>0 && $fdate<>0)?"WHERE hm.FECHA > '{$idate}' AND hm.FECHA < DATE_ADD('{$fdate}', INTERVAL 1 DAY) ":"";
 		$sql = "SELECT hm.`IDMOV`, hm.`FECHA`, hm.`DESCGLOS`, m.DESCMOV, o.DESCOPE, hm.IDVENTA, IF(hm.`TIPMOV`=1 ,SUM(TOTUNIT), 0) as Ingreso, IF(hm.`TIPMOV`=2 ,SUM(TOTUNIT), 0) as Salida 
-		FROM hmovimiento hm inner JOIN bmovimiento bm on hm.IDMOV = bm.IDMOV inner JOIN ttipomov m on hm.TIPMOV = m.TIPMOV inner JOIN ttipoope o on hm.CODOPE = o.CODOPE GROUP BY 1 ORDER BY 2; ";
+		FROM hmovimiento hm inner JOIN bmovimiento bm on hm.IDMOV = bm.IDMOV inner JOIN ttipomov m on hm.TIPMOV = m.TIPMOV inner JOIN ttipoope o on hm.CODOPE = o.CODOPE 
+		$ispost	GROUP BY 1 ORDER BY 2; ";
 		$dataSet = $this->conexion->Select($sql);
 		
 		echo '<table class="table table-striped table-responsive">
@@ -295,9 +297,8 @@ class mproducto extends conexion{
 			<th>Glosa</th>
 			<th>Movimiento</th>
 			<th>Operacion</th>
-			<th>Venta</th>
-			<th>Ingreso</th>
-			<th>Salida</th>
+			<th>Venta</th>'.(($isSession==1)?'<th>Ingreso</th>
+			<th>Salida</th>':"").'
 			<th>Ver</th>			
 		  </tr>
 		</thead>
@@ -306,24 +307,98 @@ class mproducto extends conexion{
 			$dataX = array_slice($linea,1);
 			$warning = "" ;
 			echo "<tr $warning>";
-			foreach($dataX as $celda){echo "<td>$celda</td>";}
+			foreach($dataX as $Key => $celda){				
+				if(($isSession==0)){
+					if(!($Key == 'Ingreso' || $Key == 'Salida'))
+					echo "<td>$celda</td>";
+				}else
+				echo "<td>$celda</td>";
+			}  
+
+
+			
+			echo "<td><a href='?page=movimientos&IDMov={$linea['IDMOV']}'>Detalle</a></td>";   
 			echo "</tr>";		}            
 		echo '</tbody></table>';
 	}
-	function Kardex($id){
-		$sql = "SELECT cast(hm.`FECHA` as date) as FECHA, hm.IDVENTA, bm.CANTPRD, IF(hm.`TIPMOV` = 1, bm.TOTUNIT,0) AS INGRESO, IF(hm.`TIPMOV` = 2, bm.TOTUNIT,0) AS SALIDA 
-		FROM hmovimiento hm INNER JOIN bmovimiento bm ON hm.IDMOV = bm.IDMOV Where CODPRD = $id ORDER BY hm.IDMOV";
+	function doHeadMov($idMov){
+		$sql = "SELECT hm.`IDMOV`, CAST(hm.`FECHA` AS DATE) AS FECHA, Tm.DESCMOV, tto.DESCOPE, hm.IDVENTA, hm.`DESCGLOS`, hm.IDVENTA 
+		FROM `hmovimiento` hm INNER JOIN ttipomov tm ON hm.TIPMOV = tm.TIPMOV INNER JOIN ttipoope tto ON hm.CODOPE = tto.CODOPE 
+		WHERE IDMOV = $idMov; ";
+		$dataSet = $this->conexion->Select($sql);
+		
+		echo '<table class="table table-striped table-responsive">';
+			foreach($dataSet[0] as $key => $celda){
+				echo "<tr><th> $key </th><td>$celda</td> </tr>";
+			}
+		            
+		echo '</table>';
+	}
+	function doDetMov($idMov,$isSession){
+		$sql = "SELECT b.`CODPRD`, p.NOMPROD, p.DESCPROD1, b.`CANTPRD`, b.`UNITPRD`, b.`TOTUNIT` 
+		FROM `bmovimiento` b inner join mproducto p on p.CODPRD= b.CODPRD WHERE IDMOV = $idMov; ";
 		$dataSet = $this->conexion->Select($sql);
 		
 		echo '<table class="table table-striped table-responsive">
 		<thead>
 		  <tr>
-			<th>Fecha</th>
-			<th>Venta</th>
-			<th>Cantidad</th>
-			<th>Ingreso</th>
-			<th>Salida</th>			
+		  	<th>CODIGO</th>
+		  	<th>NOMBRE</th>
+		  	<th>DESCRIPCION</th>
+		  	<th>CANTPRD</th>'.(($isSession==1)?'<th>UNITARIO</th>
+			  <th>TOTAL</th>':"").'			
 		  </tr>
+		</thead>
+		<tbody>';
+		foreach ($dataSet as $linea){
+			echo "<tr>";
+			foreach($linea as $Key => $celda){
+				if(($isSession==0)){
+					if(!($Key == 'UNITPRD' || $Key == 'TOTUNIT'))
+					echo "<td>$celda</td>";
+				}else
+				echo "<td>$celda</td>";
+			}
+			echo "</tr>";
+		}            
+		echo '</tbody></table>';
+	}
+
+
+
+
+
+	//SELECT * from vw_kardex where IdProducto= order by 1 
+	//		$sql = "SELECT cast(hm.`FECHA` as date) as FECHA, hm.IDVENTA, bm.CANTPRD, IF(hm.`TIPMOV` = 1, bm.TOTUNIT,0) AS INGRESO, IF(hm.`TIPMOV` = 2, bm.TOTUNIT,0) AS SALIDA 
+	//		FROM hmovimiento hm INNER JOIN bmovimiento bm ON hm.IDMOV = bm.IDMOV Where CODPRD = $id ORDER BY hm.IDMOV";
+	function Kardex($id){
+		$sql = "SELECT CAST(hm.`FECHA` AS DATE) AS FECHA, Tm.DESCMOV, tto.DESCOPE, hm.IDVENTA, 
+			IF(hm.`TIPMOV` = 1, bm.CANTPRD, 0) AS 'Cantidad I', IF(hm.`TIPMOV` = 1, bm.UNITPRD, 0) AS 'V. Unitario I', IF(hm.`TIPMOV` = 1, bm.TOTUNIT, 0) AS 'V Total I', 
+			IF(hm.`TIPMOV` = 2, bm.CANTPRD, 0) AS 'Cantidad S', IF(hm.`TIPMOV` = 2, bm.UNITPRD, 0) AS 'V. Unitario S', IF(hm.`TIPMOV` = 2, bm.TOTUNIT, 0) AS 'V Total S' 
+		FROM hmovimiento hm INNER JOIN bmovimiento bm ON hm.IDMOV = bm.IDMOV INNER JOIN ttipomov tm ON hm.TIPMOV = tm.TIPMOV INNER JOIN ttipoope tto ON hm.CODOPE = tto.CODOPE 
+		WHERE CODPRD = $id ORDER BY hm.IDMOV; ";
+
+		$dataSet = $this->conexion->Select($sql);
+		
+		echo '<table class="table table-bordered table-responsive">
+		<thead>
+			<tr>
+				<th rowspan="2" class="text-center">FECHA</th>
+				<th colspan="3" class="text-center">DETALLE</th>
+				<th colspan="3" class="text-center">ENTRADAS</th>
+				<th colspan="3" class="text-center">SALIDAS</th>			
+			</tr>
+			<tr>
+				<th>DESCMOV</th>
+				<th>DESCOPE</th>
+				<th>IDVENTA</th>
+				<th>Cantidad</th>
+				<th>V. Unitario</th>
+				<th>V Total</th>
+				<th>Cantidad</th>
+				<th>V. Unitario</th>
+				<th>V Total</th>			
+			</tr>
 		</thead>
 		<tbody>';
 		foreach ($dataSet as $linea){
@@ -349,7 +424,6 @@ class mproducto extends conexion{
 		echo '</select>';
 		
 	}
-
 	function doListMedida($id){        
 		$sql ="SELECT * from tmedida "; ///Modificar5
 		$DataSet = $this->conexion->Select($sql);
@@ -360,8 +434,7 @@ class mproducto extends conexion{
 			echo "<option value='{$data['CODUNID']}' $selected >{$data['ABREUNID']}</option>";
 		}            
 		echo '</select>';
-	}
-	
+	}	
 	function doListVigencia($id){
 		echo '<select class="form-control" name="VIGENCIA">';
 		if($id==1)
